@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="15dp"
+    android:id="@+id/bookmark_parent">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/bookmark_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@mipmap/ic_launcher"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/bookmark_name"
+        android:layout_width="116dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="18dp"
+        android:text="temporary"
+        android:textColor="#000"
+        android:textSize="17dp"
+        app:layout_constraintBottom_toTopOf="@+id/coordinates"
+        app:layout_constraintStart_toEndOf="@+id/bookmark_image"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/coordinates"
+        android:layout_width="159dp"
+        android:layout_height="25dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/bookmark_delete"
+        app:layout_constraintHorizontal_bias="0.391"
+        app:layout_constraintStart_toEndOf="@+id/bookmark_image" />
+
+    <ImageButton
+        android:id="@+id/bookmark_delete"
+        android:layout_width="67dp"
+        android:layout_height="59dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.705"
+        app:layout_constraintStart_toEndOf="@+id/bookmark_name"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.509"
+        tools:srcCompat="@drawable/delete_icon" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
