@@ -1,19 +1,29 @@
 package com.mobdev.locationapp.ui.settings;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
-import com.mobdev.locationapp.R;
+import static com.mobdev.locationapp.R.string.themeLight_title;
+import static com.mobdev.locationapp.R.xml.settings;
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceChangeListener {
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(settings, rootKey);
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        findPreference(getString(themeLight_title)).setOnPreferenceChangeListener(this);
     }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+        return false;
+    }
+}
+
+enum Theme {
+    DARK,
+    LIGHT
 }

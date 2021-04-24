@@ -17,14 +17,17 @@ public class Location {
     private final double x;
     @ColumnInfo(name = "Y")
     private final double y;
+    @ColumnInfo(name = "IMAGE_URL")
+    private final String imgURL;
 
     @ColumnInfo(name = "BOOKMARK_NAME")
     private String bookmarkName;
 
-    public Location(String locationName, double x, double y) {
+    public Location(String locationName, double x, double y, String imgURL) {
         this.locationName = locationName;
         this.x = x;
         this.y = y;
+        this.imgURL = imgURL;
     }
 
     @Dao
@@ -33,7 +36,7 @@ public class Location {
         List<Location> getBookmarks();
 
         @Query("SELECT * FROM Bookmarks WHERE BOOKMARK_NAME LIKE :bookmarkName")
-        com.mobdev.locationapp.Model.Location getBookmark(String bookmarkName);
+        Location getBookmark(String bookmarkName);
 
         @Query("SELECT * FROM Bookmarks WHERE EXISTS(" +
                 "SELECT * FROM Bookmarks WHERE BOOKMARK_NAME LIKE :bookmarkName" +
@@ -44,10 +47,10 @@ public class Location {
         void updateBookmarkName(String locationName, String bookmarkName);
 
         @Insert
-        void addBookmark(com.mobdev.locationapp.Model.Location... location);
+        void addBookmark(Location... location);
 
         @Delete
-        void deleteBookmark(com.mobdev.locationapp.Model.Location... location);
+        void deleteBookmark(Location... location);
     }
 
     public String getLocationName() {
@@ -64,6 +67,10 @@ public class Location {
 
     public String getBookmarkName() {
         return bookmarkName;
+    }
+
+    public String getImgURL() {
+        return imgURL;
     }
 
     public void setBookmarkName(String bookmarkName) {
