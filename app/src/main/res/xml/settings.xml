@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <SwitchPreference
+        android:key="@string/themeLight_title"
+        android:summary="@string/toggle_dark_mode"
+        android:title="@string/dark_mode" />
+
+    <Preference
+        android:title="@string/delete_data"
+        android:summary="@string/delete_app_data_from_phone"/>
+</androidx.preference.PreferenceScreen>
