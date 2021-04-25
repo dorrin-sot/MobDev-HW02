@@ -1,15 +1,19 @@
 package com.mobdev.locationapp.ui.bookmark;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,16 +23,22 @@ import com.mobdev.locationapp.Model.Location;
 import com.mobdev.locationapp.R;
 
 import java.util.ArrayList;
+import java.util.Locale;
+
+import static android.app.Activity.RESULT_OK;
 
 public class BookmarkFragment extends Fragment {
-    private TextView bookmarkSearch;
+    private static final int REQUESR_SPEACH_CODE = 1000;
+    private TextView bookmarkSearch_textview;
+    private ImageButton bookmarkSearch_voice_btn;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         Logger.e("oncreateview gets called");
         View view = inflater.inflate(R.layout.fragment_bookmarks, container, false);
         init(view);
-        bookmarkSearch= view.findViewById(R.id.bookmark_search_text);
-        bookmarkSearch.addTextChangedListener(new TextWatcher() {
+        bookmarkSearch_textview = view.findViewById(R.id.bookmark_search_text);
+        bookmarkSearch_voice_btn= view.findViewById(R.id.bookmark_search_voice_btn);
+        bookmarkSearch_textview.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -44,7 +54,26 @@ public class BookmarkFragment extends Fragment {
                 filter(s.toString());
             }
         });
+        bookmarkSearch_voice_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lunchSpeakIntent(v);
+            }
+        });
         return view;
+    }
+
+    private void lunchSpeakIntent(View view) {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"please name your desired location");
+        try {
+            startActivityForResult(intent,REQUESR_SPEACH_CODE);
+        }
+        catch (Exception e){
+            Toast.makeText(view.getContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -102,5 +131,19 @@ public class BookmarkFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case REQUESR_SPEACH_CODE:{
+                if(resultCode==RESULT_OK && data!=null){
+                    ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    bookmarkSearch_textview.setText(result.get(0));
+                }
+                break;
+            }
 
+        }
+
+    }
 }
