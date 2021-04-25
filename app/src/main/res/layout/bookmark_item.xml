@@ -26,7 +26,7 @@
         android:layout_height="40dp"
         android:layout_marginStart="18dp"
         android:text="temporary"
-        android:textColor="#000"
+        android:textColor="@color/black"
         android:textSize="17dp"
         app:layout_constraintBottom_toTopOf="@+id/coordinates"
         app:layout_constraintStart_toEndOf="@+id/bookmark_image"

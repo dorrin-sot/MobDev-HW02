@@ -6,13 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.bookmark.BookmarkFragment">
 
-    <Button
-        android:id="@+id/search_button"
+    <EditText
+        android:id="@+id/bookmark_search_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/bookMark_RV"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/bookMark_RV"
@@ -20,5 +25,6 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_button" />
+        app:layout_constraintTop_toBottomOf="@+id/bookmark_search_text"
+        android:layout_margin="5dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

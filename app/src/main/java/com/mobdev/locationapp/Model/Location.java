@@ -1,11 +1,15 @@
 package com.mobdev.locationapp.Model;
 
+import android.util.Log;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Entity;
 import androidx.room.Insert;
 import androidx.room.Query;
+
+import com.mobdev.locationapp.Logger;
 
 import java.util.List;
 
@@ -24,6 +28,8 @@ public class Location {
     private String bookmarkName;
 
     public Location(String locationName, double x, double y, String imgURL) {
+//        print();
+        Log.e("location","location in Location: "+locationName);
         this.locationName = locationName;
         this.x = x;
         this.y = y;
