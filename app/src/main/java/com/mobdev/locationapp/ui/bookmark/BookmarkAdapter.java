@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,19 +22,26 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHolder> {
+public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHolder>  {
     private static final String TAG = "BookmarkAdapter";
-    private ArrayList<String>  imageSrcs_array=  new ArrayList<>();
-    private ArrayList<String>  name_array=  new ArrayList<>();
-    private ArrayList<String>  coordinatees_array=  new ArrayList<>();
+
+    public static ArrayList<String>  imageSrcs_array=  new ArrayList<>();
+    public static ArrayList<String>  name_array=  new ArrayList<>();
+    public static ArrayList<String>  coordinatees_array=  new ArrayList<>();
+    public static ArrayList<String>  imageSrcs_array_copy=  new ArrayList<>();
+    public static ArrayList<String>  name_array_copy=  new ArrayList<>();
+    public static ArrayList<String>  coordinatees_array_copy=  new ArrayList<>();
+
     private Context mContext;
+    public static BookmarkAdapter adapter;
 
-
-    public BookmarkAdapter(Context mContext,ArrayList<String> imageSrcs_array, ArrayList<String> name_array, ArrayList<String> coordinatees_array) {
-        this.imageSrcs_array = imageSrcs_array;
-        this.name_array = name_array;
-        this.coordinatees_array = coordinatees_array;
+//,ArrayList<String> imageSrcs_array, ArrayList<String> name_array, ArrayList<String> coordinatees_array
+    public BookmarkAdapter(Context mContext) {
+//        this.imageSrcs_array = imageSrcs_array;
+//        this.name_array = name_array;
+//        this.coordinatees_array = coordinatees_array;
         this.mContext = mContext;
+        adapter=this;
     }
 
     @NonNull
@@ -52,12 +61,14 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
                 .into(holder.image);
         holder.coordinates.setText(coordinatees_array.get(position));
         holder.name.setText(name_array.get(position));
-        holder.delete_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(mContext,name_array.get(position),Toast.LENGTH_LONG).show();
-            }
-        });
+//        holder.delete_btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(mContext,name_array.get(position),Toast.LENGTH_LONG).show();
+//
+//            }
+//        });
+
 
     }
 
@@ -66,7 +77,39 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
         return name_array.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+//    @Override
+//    public Filter getFilter() {
+//        return new Filter() {
+//            @Override
+//            protected FilterResults performFiltering(CharSequence constraint) {
+//                ArrayList<String> filteredList = new ArrayList<>();
+//
+//                if (constraint == null || constraint.length() == 0) {
+//                    filteredList.addAll();
+//                } else {
+//                    String filterPattern = constraint.toString().toLowerCase().trim();
+//
+//                    for (ExampleItem item : exampleListFull) {
+//                        if (item.getText2().toLowerCase().contains(filterPattern)) {
+//                            filteredList.add(item);
+//                        }
+//                    }
+//                }
+//
+//                FilterResults results = new FilterResults();
+//                results.values = filteredList;
+//
+//                return results;
+//            }
+//
+//            @Override
+//            protected void publishResults(CharSequence constraint, FilterResults results) {
+//
+//            }
+//        };
+//    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         CircleImageView image;
         TextView name;
         TextView coordinates;
@@ -79,7 +122,35 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
             coordinates= itemView.findViewById(R.id.coordinates);
             delete_btn= itemView.findViewById(R.id.bookmark_delete);
             parentLayout = itemView.findViewById(R.id.bookmark_parent);
-
+            delete_btn.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            if(v.equals(delete_btn)){
+                removeAt(getAdapterPosition());
+            }
+        }
+
+
+    }
+    public void removeAt(int adapterPosition) {
+        imageSrcs_array.remove(adapterPosition);
+        name_array.remove(adapterPosition);
+        coordinatees_array.remove(adapterPosition);
+        notifyItemRemoved(adapterPosition);
+        notifyItemRangeChanged(adapterPosition, imageSrcs_array.size());
+    }
+    public static void addPlace(String image,String name,String coordinate){
+        imageSrcs_array.add(image);
+        name_array.add(name);
+        coordinatees_array.add(coordinate);
+        imageSrcs_array_copy= (ArrayList<String>) imageSrcs_array.clone();
+        name_array_copy= (ArrayList<String>) name_array.clone();
+        coordinatees_array_copy= (ArrayList<String>) coordinatees_array.clone();
+        adapter.notifyDataSetChanged();
+//        adapter.notifyItemInserted(imageSrcs_array.size()-1);
+
     }
 }
