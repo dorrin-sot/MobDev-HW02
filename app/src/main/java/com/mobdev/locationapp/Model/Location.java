@@ -42,6 +42,9 @@ public class Location {
         List<Location> getBookmarks();
 
         @Query("SELECT * FROM Bookmarks WHERE BOOKMARK_NAME LIKE :bookmarkName")
+        List<Location> searchBookmarks (String bookmarkName);
+
+        @Query("SELECT * FROM Bookmarks WHERE BOOKMARK_NAME LIKE :bookmarkName")
         Location getBookmark(String bookmarkName);
 
         @Query("SELECT * FROM Bookmarks WHERE EXISTS(" +
@@ -57,6 +60,9 @@ public class Location {
 
         @Delete
         void deleteBookmark(Location... location);
+
+        @Query("DELETE FROM Bookmarks")
+        void deleteAllBookmarks();
     }
 
     public String getLocationName() {

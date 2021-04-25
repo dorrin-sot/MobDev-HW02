@@ -9,6 +9,7 @@
         android:title="@string/dark_mode" />
 
     <Preference
+        android:key="@string/delete_data"
         android:title="@string/delete_data"
         android:summary="@string/delete_app_data_from_phone"/>
 </androidx.preference.PreferenceScreen>
