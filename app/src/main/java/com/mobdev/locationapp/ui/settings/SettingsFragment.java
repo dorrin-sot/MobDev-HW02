@@ -6,9 +6,10 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import static com.mobdev.locationapp.Handler.Message.DELETE_ALL_DATA;
+import static com.mobdev.locationapp.Handler.Message.SET_THEME;
 import static com.mobdev.locationapp.Handler.getHandler;
 import static com.mobdev.locationapp.R.string.delete_data;
-import static com.mobdev.locationapp.R.string.themeLight_title;
+import static com.mobdev.locationapp.R.string.themeDark_title;
 import static com.mobdev.locationapp.R.xml.settings;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
@@ -16,7 +17,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(settings, rootKey);
 
-        findPreference(getString(themeLight_title)).setOnPreferenceChangeListener(this);
+        findPreference(getString(themeDark_title)).setOnPreferenceChangeListener(this);
 
         findPreference(getString(delete_data)).setOnPreferenceClickListener(this);
     }
@@ -34,12 +35,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        if (preference.getKey().equals(getString(themeLight_title))) {
-            Boolean goDark = (Boolean) newValue;
-
-            // TODO: 4/25/21
-            return false;
-        }
+        getHandler().sendMessage(
+                getHandler().obtainMessage(
+                        SET_THEME.ordinal(), // set app theme
+                        1, // true -> in settings page
+                        0
+                )
+        );
         return true;
     }
 }

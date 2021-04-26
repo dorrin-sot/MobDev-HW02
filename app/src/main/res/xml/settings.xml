@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <SwitchPreference
-        android:key="@string/themeLight_title"
+        android:key="@string/themeDark_title"
         android:summary="@string/toggle_dark_mode"
         android:title="@string/dark_mode" />
 

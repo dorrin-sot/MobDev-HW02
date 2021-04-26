@@ -13,8 +13,6 @@
     <string name="delete_data">Delete Data</string>
     <string name="delete_app_data_from_phone">Delete App Data From Phone</string>
     <!--    preferences     -->
-    <string name="themeLight_title">themeLight</string>
-    <bool name="themeLight">false</bool>
-    <string name="firstTime_title">firstTime</string>
-    <bool name="firstTime">true</bool>
+    <string name="themeDark_title">themeDark</string>
+    <bool name="themeDark">false</bool>
 </resources>
