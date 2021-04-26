@@ -12,10 +12,8 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.mobdev.locationapp.Logger.d;
 import static com.mobdev.locationapp.MainActivity.db;
-import static com.mobdev.locationapp.R.string.themeLight_title;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 public class Handler extends android.os.Handler {

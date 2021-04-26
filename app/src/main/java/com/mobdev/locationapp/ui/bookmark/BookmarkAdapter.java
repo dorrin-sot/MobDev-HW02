@@ -52,9 +52,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
                 .load(tempLocationList.get(position).getImgURL())
                 .into(holder.image);
         holder.coordinates.setText(tempLocationList.get(position).getX()+","+tempLocationList.get(position).getY());
-//        Log.e("location","location in holder: "+tempLocationList.get(position).getBookmarkName());
+//        Log.e("location","location in holder: "+tempLocationList.get(position).getName());
 //        Logger.e("location in Location: "+);
-        holder.name.setText(tempLocationList.get(position).getLocationName());
+        holder.name.setText(tempLocationList.get(position).getName());
 //        holder.delete_btn.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -104,7 +104,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
     }
     public void removeAt(int adapterPosition) {
         //todo fix removing stuff
-        removeFromFullLocationList(tempLocationList.get(adapterPosition).getLocationName(),
+        removeFromFullLocationList(tempLocationList.get(adapterPosition).getName(),
                 tempLocationList.get(adapterPosition).getX(),tempLocationList.get(adapterPosition).getY());
         tempLocationList.remove(adapterPosition);
 
@@ -117,7 +117,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
         int position=-1;
         for (int i=0 ;i <fullLocationList.size();i++){
             Location location =fullLocationList.get(i);
-            if (location.getLocationName().toLowerCase().equals(locationName.toLowerCase()) &&
+            if (location.getName().toLowerCase().equals(locationName.toLowerCase()) &&
                 location.getX()==x && location.getY()==y){
                 position=i;
                 break;

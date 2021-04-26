@@ -80,7 +80,7 @@ public class BookmarkFragment extends Fragment {
     private void filter(String text) {
         ArrayList<Location> filteredList = new ArrayList<>();
         for(Location location : BookmarkAdapter.fullLocationList ){
-            if (location.getLocationName().toLowerCase().contains(text.toLowerCase())){
+            if (location.getName().toLowerCase().contains(text.toLowerCase())){
                 filteredList.add(location);
             }
         }
