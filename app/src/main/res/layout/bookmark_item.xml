@@ -50,7 +50,7 @@
         android:background="@color/white"
         android:src="@drawable/delete_icon"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/bookmark_name"
         app:layout_constraintTop_toTopOf="@+id/bookmark_name" />
 

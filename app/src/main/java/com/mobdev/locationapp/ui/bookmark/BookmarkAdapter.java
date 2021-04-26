@@ -1,6 +1,8 @@
 package com.mobdev.locationapp.ui.bookmark;
 
 import android.content.Context;
+
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +13,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.mobdev.locationapp.Handler.Message;
 import com.bumptech.glide.Glide;
+import com.mobdev.locationapp.Handler;
 import com.mobdev.locationapp.Logger;
 import com.mobdev.locationapp.Model.Location;
 import com.mobdev.locationapp.R;
@@ -129,12 +132,23 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
         fullLocationList.remove(position);
     }
 
-    public static void addPlace(Location newLocation){
-//        Location newLocation = new Location(name,x,y,image);
-        fullLocationList.add(newLocation);
+    public static void addBookmarkMessage(Location newLocation){
+        android.os.Message message = new android.os.Message();
+        message.what= Message.ADD_BOOKMARK.ordinal() ;
+        Bundle bundle =new Bundle();
+        bundle.putString("location_name",newLocation.getLocationName());
+        bundle.putDouble("x",newLocation.getX());
+        bundle.putDouble("y",newLocation.getY());
+        bundle.putString("img_url",newLocation.getImgURL());
+        message.setData(bundle);
+        Handler.getHandler().sendMessage(message);
+
+
+
+    }
+    public static synchronized void addBookmark(Location location){
+        fullLocationList.add(location);
         tempLocationList = (ArrayList<Location>) fullLocationList.clone();
         adapter.notifyDataSetChanged();
-//        adapter.notifyItemInserted(imageSrcs_array.size()-1);
-
     }
 }

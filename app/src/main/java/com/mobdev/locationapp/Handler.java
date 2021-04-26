@@ -3,19 +3,19 @@ package com.mobdev.locationapp;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.mobdev.locationapp.Model.Location;
+import com.mobdev.locationapp.ui.bookmark.BookmarkAdapter;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.mobdev.locationapp.Logger.d;
 import static com.mobdev.locationapp.MainActivity.db;
-import static com.mobdev.locationapp.R.string.themeLight_title;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 public class Handler extends android.os.Handler {
@@ -39,20 +39,29 @@ public class Handler extends android.os.Handler {
                 );
                 break;
             case ADD_BOOKMARK:
-                executor.execute(() ->
-                        db.locationDao().addBookmark(getLocationFromMessage(msg))
-                );
+//                android.os.Message newMessage  =msg;
+                Bundle bundle = msg.getData();
+                executor.execute(() ->{
+//                    Log.e("chert", "handleMessage: "+msg );
+                    Location location =   getLocationFromMessage(bundle);
+                    Log.e("exce locaioon: ", location.getLocationName());
+                    db.locationDao().addBookmark(location);
+                    activityWeakReference.get().runOnUiThread(()->
+                            BookmarkAdapter.addBookmark(location)
+
+                    );
+                });
                 break;
             case DELETE_BOOKMARK:
                 executor.execute(() ->
-                        db.locationDao().deleteBookmark(getLocationFromMessage(msg))
+                        db.locationDao().deleteBookmark(getLocationFromMessage(msg.getData()))
                 );
                 break;
             case GET_ALL_BOOKMARKS:
                 executor.execute(() -> {
                             List<Location> bookmarks = db.locationDao().getBookmarks();
 
-                            activityWeakReference.get().runOnUiThread(() ->
+                             activityWeakReference.get().runOnUiThread(() ->
                                     updateBookmarkList(bookmarks)
                             );
                         }
@@ -78,14 +87,20 @@ public class Handler extends android.os.Handler {
         // TODO: 4/25/21  
     }
 
-    private Location getLocationFromMessage(android.os.Message msg) {
-        Bundle locationData = msg.getData();
-        return new Location(
+    private Location getLocationFromMessage(Bundle locationData) {
+        Log.e("tag", "getLocationFromMessage: ");
+//        Bundle locationData = msg.getData();
+
+        Log.e("tag", "getLocationFromMessage: "+locationData);
+        Location location= new Location(
                 locationData.getString("location_name"),
                 locationData.getDouble("x"),
                 locationData.getDouble("y"),
                 locationData.getString("img_url")
         );
+        location.setBookmarkName("alaki");
+        return location;
+
     }
 
     public Handler(@NonNull Looper looper) {
@@ -103,7 +118,7 @@ public class Handler extends android.os.Handler {
         this.activityWeakReference = activityWeakReference;
     }
 
-    public enum Message {
+    public  enum Message {
         SWITCH_THEME,
         DELETE_ALL_DATA,
         ADD_BOOKMARK,

@@ -98,23 +98,23 @@ public class BookmarkFragment extends Fragment {
     }
 
     private void getBookmarkFromSQL() {
-        BookmarkAdapter.addPlace(new Location("Havasu Falls"
+        BookmarkAdapter.addBookmarkMessage(new Location("Havasu Falls"
                 ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
-        BookmarkAdapter.addPlace(new Location("fasdfFalls"
+        BookmarkAdapter.addBookmarkMessage(new Location("fasdfFalls"
                 ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
-        BookmarkAdapter.addPlace(new Location("dfgu Falls"
+        BookmarkAdapter.addBookmarkMessage(new Location("dfgu Falls"
                 ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
-        BookmarkAdapter.addPlace(new Location("klk"
+        BookmarkAdapter.addBookmarkMessage(new Location("klk"
                 ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
-        BookmarkAdapter.addPlace(new Location("fhrg"
+        BookmarkAdapter.addBookmarkMessage(new Location("fhrg"
                 ,2,1,"https://i.imgur.com/ZcLLrkY.jpg"));
-        BookmarkAdapter.addPlace(new Location("Hava fgfg"
+        BookmarkAdapter.addBookmarkMessage(new Location("Hava fgfg"
                 ,2,1,"https://i.imgur.com/ZcLLrkY.jpg"));
-        BookmarkAdapter.addPlace(new Location("Hava bbbb"
+        BookmarkAdapter.addBookmarkMessage(new Location("Hava bbbb"
                 ,2,1,"https://i.imgur.com/ZcLLrkY.jpg"));
-        BookmarkAdapter.addPlace(new Location("Hava aaa"
+        BookmarkAdapter.addBookmarkMessage(new Location("Hava aaa"
                 ,2,1,"https://i.imgur.com/ZcLLrkY.jpg"));
-        BookmarkAdapter.addPlace(new Location("Havasu Fs"
+        BookmarkAdapter.addBookmarkMessage(new Location("Havasu Fs"
                 ,2,1,"https://i.imgur.com/ZcLLrkY.jpg"));
     }
 
