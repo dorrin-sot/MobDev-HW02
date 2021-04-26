@@ -26,13 +26,12 @@ import static com.mobdev.locationapp.R.id.navigation_settings;
 public class MainActivity extends AppCompatActivity {
     static LocationDB db;
 
-    public static AppCompatActivity activity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        activity=this;
+
         new Handler(getMainLooper());
         getHandler().setActivityWeakReference(new WeakReference<>(this));
 
