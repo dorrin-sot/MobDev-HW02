@@ -2,6 +2,7 @@ package com.mobdev.locationapp.ui.bookmark;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -24,6 +24,7 @@ import com.mobdev.locationapp.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Random;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -51,7 +52,7 @@ public class BookmarkFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                filter(s.toString());
+                BookmarkAdapter.searchMessage(s.toString());
             }
         });
         bookmarkSearch_voice_btn.setOnClickListener(new View.OnClickListener() {
@@ -77,20 +78,12 @@ public class BookmarkFragment extends Fragment {
     }
 
 
-    private void filter(String text) {
-        ArrayList<Location> filteredList = new ArrayList<>();
-        for(Location location : BookmarkAdapter.fullLocationList ){
-            if (location.getName().toLowerCase().contains(text.toLowerCase())){
-                filteredList.add(location);
-            }
-        }
-        BookmarkAdapter.adapter.filterList(filteredList);
 
-    }
 
     private void init(View view){
+
         Logger.d("initImageBitmaps: preparing bitmaps.");
-        clearBookmarkList();
+
         initRecyclerView(view);
         getBookmarkFromSQL();
 
@@ -98,30 +91,14 @@ public class BookmarkFragment extends Fragment {
     }
 
     private void getBookmarkFromSQL() {
-//        BookmarkAdapter.addBookmarkMessage(new Location("Havasu Falls"
-//                ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
-//        BookmarkAdapter.addBookmarkMessage(new Location("fasdfFalls"
-//                ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
-//        BookmarkAdapter.addBookmarkMessage(new Location("dfgu Falls"
-//                ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
-//        BookmarkAdapter.addBookmarkMessage(new Location("klk"
-//                ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
-        BookmarkAdapter.addBookmarkMessage(new Location("fhrg"
-                ,2,1,"https://i.imgur.com/ZcLLrkY.jpg"));
-        BookmarkAdapter.addBookmarkMessage(new Location("Hava fgfg"
-                ,2,1,"https://i.imgur.com/ZcLLrkY.jpg"));
-        BookmarkAdapter.addBookmarkMessage(new Location("Hava bbbb"
-                ,2,1,"https://i.imgur.com/ZcLLrkY.jpg"));
-        BookmarkAdapter.addBookmarkMessage(new Location("Hava aaa"
-                ,2,1,"https://i.imgur.com/ZcLLrkY.jpg"));
-        BookmarkAdapter.addBookmarkMessage(new Location("Havasu Fs"
-                ,2,1,"https://i.imgur.com/ZcLLrkY.jpg"));
+        BookmarkAdapter.updateBookmarkListMessage();
+        Random random = new Random();
+        BookmarkAdapter.addBookmarkMessage(new Location("fhrg"+random.nextInt()
+                ,random.nextDouble(),random.nextDouble(),"https://i.imgur.com/ZcLLrkY.jpg"));
+
     }
 
-    private void clearBookmarkList() {
-        BookmarkAdapter.fullLocationList.clear();
-        BookmarkAdapter.tempLocationList.clear();
-    }
+
 
     private void initRecyclerView(View view) {
         Logger.d("initRecyclerView: recycler view init");

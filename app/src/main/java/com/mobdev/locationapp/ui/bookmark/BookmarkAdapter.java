@@ -21,14 +21,14 @@ import com.mobdev.locationapp.Model.Location;
 import com.mobdev.locationapp.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHolder>  {
     private static final String TAG = "BookmarkAdapter";
 
-    public static ArrayList<Location> fullLocationList =  new ArrayList<>();
-    public static ArrayList<Location> tempLocationList =  new ArrayList<>();
+    public static ArrayList<Location> bookmarkList =  new ArrayList<>();
 
     private Context mContext;
     public static BookmarkAdapter adapter;
@@ -38,6 +38,26 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
         this.mContext = mContext;
         adapter=this;
     }
+
+    public static void updateBookmarkList(ArrayList<Location> bookmarks) {
+        Logger.e("bookmarks to update: "+bookmarks.toString());
+        bookmarkList=bookmarks;
+        adapter.notifyDataSetChanged();
+
+    }
+
+    public static void searchMessage(String searchString) {
+        android.os.Message message = new android.os.Message();
+        message.what=Message.SEARCH_BOOKMARKS.ordinal();
+        message.obj=searchString;
+        sendMessageToHandler(message);
+
+    }
+
+    private static void sendMessageToHandler(android.os.Message message) {
+        Handler.getHandler().sendMessage(message);
+    }
+
 
     @NonNull
     @Override
@@ -52,30 +72,21 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
         Log.d(TAG, "onBindViewHolder: called");
         Glide.with(mContext)
                 .asBitmap()
-                .load(tempLocationList.get(position).getImgURL())
+                .load(bookmarkList.get(position).getImgURL())
                 .into(holder.image);
-        holder.coordinates.setText(tempLocationList.get(position).getX()+","+tempLocationList.get(position).getY());
-//        Log.e("location","location in holder: "+tempLocationList.get(position).getName());
-//        Logger.e("location in Location: "+);
-        holder.name.setText(tempLocationList.get(position).getName());
-//        holder.delete_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(mContext,name_array.get(position),Toast.LENGTH_LONG).show();
-//
-//            }
-//        });
+        holder.coordinates.setText(bookmarkList.get(position).getX()+","+ bookmarkList.get(position).getY());
+        holder.name.setText(bookmarkList.get(position).getName());
 
 
     }
 
     @Override
     public int getItemCount() {
-        return tempLocationList.size();
+        return bookmarkList.size();
     }
 
     public void filterList(ArrayList<Location> filteredList) {
-        tempLocationList=filteredList;
+        bookmarkList =filteredList;
         notifyDataSetChanged();
     }
 
@@ -99,37 +110,26 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
         @Override
         public void onClick(View v) {
             if(v.equals(delete_btn)){
-                removeAt(getAdapterPosition());
+                removeBookmarkMessage(getAdapterPosition());
             }
         }
 
 
     }
-    public void removeAt(int adapterPosition) {
+    public void removeBookmarkMessage(int adapterPosition) {
         //todo fix removing stuff
-        removeFromFullLocationList(tempLocationList.get(adapterPosition).getName(),
-                tempLocationList.get(adapterPosition).getX(),tempLocationList.get(adapterPosition).getY());
-        tempLocationList.remove(adapterPosition);
+        Location newLocation = bookmarkList.get(adapterPosition);
+        android.os.Message message = new android.os.Message();
+        message.what= Message.DELETE_BOOKMARK.ordinal();
+        Bundle bundle =new Bundle();
+        bundle.putString("location_name",newLocation.getName());
+        bundle.putDouble("x",newLocation.getX());
+        bundle.putDouble("y",newLocation.getY());
+        bundle.putString("img_url",newLocation.getImgURL());
+        bundle.putInt("position",adapterPosition);
+        message.setData(bundle);
+        sendMessageToHandler(message);
 
-        notifyItemRemoved(adapterPosition);
-        notifyItemRangeChanged(adapterPosition, tempLocationList.size());
-    }
-
-    private void removeFromFullLocationList(String locationName , double x, double y) {
-        //todo complete this function
-        int position=-1;
-        for (int i=0 ;i <fullLocationList.size();i++){
-            Location location =fullLocationList.get(i);
-            if (location.getName().toLowerCase().equals(locationName.toLowerCase()) &&
-                location.getX()==x && location.getY()==y){
-                position=i;
-                break;
-            }
-        }
-        if(position==-1){
-            new Exception("position in removeFromFullLocationList is -1");
-        }
-        fullLocationList.remove(position);
     }
 
     public static void addBookmarkMessage(Location newLocation){
@@ -141,14 +141,21 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
         bundle.putDouble("y",newLocation.getY());
         bundle.putString("img_url",newLocation.getImgURL());
         message.setData(bundle);
-        Handler.getHandler().sendMessage(message);
-
+        sendMessageToHandler(message);
 
 
     }
+    public static void updateBookmarkListMessage(){
+        android.os.Message message = new android.os.Message();
+        message.what=Message.GET_ALL_BOOKMARKS.ordinal();
+        sendMessageToHandler(message);
+    }
     public static synchronized void addBookmark(Location location){
-        fullLocationList.add(location);
-        tempLocationList = (ArrayList<Location>) fullLocationList.clone();
+        bookmarkList.add(location);
+        adapter.notifyDataSetChanged();
+    }
+    public static synchronized void removeBookmark(int position){
+        bookmarkList.remove(position);
         adapter.notifyDataSetChanged();
     }
 }

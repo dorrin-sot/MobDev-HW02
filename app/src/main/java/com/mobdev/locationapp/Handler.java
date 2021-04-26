@@ -11,8 +11,10 @@ import com.mobdev.locationapp.Model.Location;
 import com.mobdev.locationapp.ui.bookmark.BookmarkAdapter;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.mobdev.locationapp.Logger.d;
 import static com.mobdev.locationapp.MainActivity.db;
@@ -28,7 +30,8 @@ public class Handler extends android.os.Handler {
         super.handleMessage(msg);
 
         d("message = " + Message.values()[msg.what]);
-
+        Bundle bundle;
+        AtomicReference<Location> location = new AtomicReference<>();
         switch (Message.values()[msg.what]) {
             case SWITCH_THEME:
                 // TODO: 4/25/21  
@@ -40,38 +43,45 @@ public class Handler extends android.os.Handler {
                 break;
             case ADD_BOOKMARK:
 
-                Bundle bundle = msg.getData();
+                bundle = msg.getData();
                 executor.execute(() ->{
-                    Location location =   getLocationFromMessage(bundle);
-//                    db.locationDao().addBookmark(location);
+                    location.set(getLocationFromBundle(bundle));
+                    db.locationDao().addBookmark(location.get());
                     activityWeakReference.get().runOnUiThread(()->
-                            BookmarkAdapter.addBookmark(location)
+                            BookmarkAdapter.addBookmark(location.get())
 
                     );
                 });
                 break;
             case DELETE_BOOKMARK:
-                executor.execute(() ->
-                        db.locationDao().deleteBookmark(getLocationFromMessage(msg.getData()))
-                );
+                bundle = msg.getData();
+                executor.execute(() -> {
+                    location.set(getLocationFromBundle(bundle));
+                    int position = bundle.getInt("position");
+                    db.locationDao().deleteBookmark(location.get());
+                    activityWeakReference.get().runOnUiThread(() -> {
+                        BookmarkAdapter.removeBookmark(position);
+                    });
+                });
                 break;
             case GET_ALL_BOOKMARKS:
                 executor.execute(() -> {
-                            List<Location> bookmarks = db.locationDao().getBookmarks();
-
+                            ArrayList<Location> bookmarks = (ArrayList<Location>) db.locationDao().getBookmarks();
                              activityWeakReference.get().runOnUiThread(() ->
-                                    updateBookmarkList(bookmarks)
+                                    BookmarkAdapter.updateBookmarkList(bookmarks)
                             );
                         }
                 );
                 break;
             case SEARCH_BOOKMARKS:
+                String searchPhrase = (String) msg.obj;
+                Logger.e("searchPhrase: ");
+                Logger.e("searchPhrase: "+searchPhrase );
                 executor.execute(() -> {
-                            String searchPhrase = (String) msg.obj;
-                            List<Location> bookmarks = db.locationDao().searchBookmarks(searchPhrase);
+                            ArrayList<Location> bookmarks = (ArrayList<Location>) db.locationDao().searchBookmarks(searchPhrase);
 
                             activityWeakReference.get().runOnUiThread(() ->
-                                    updateBookmarkList(bookmarks)
+                                    BookmarkAdapter.updateBookmarkList(bookmarks)
                             );
                         }
                 );
@@ -85,18 +95,13 @@ public class Handler extends android.os.Handler {
         // TODO: 4/25/21  
     }
 
-    private Location getLocationFromMessage(Bundle locationData) {
-//        Log.e("tag", "getLocationFromMessage: ");
-//        Bundle locationData = msg.getData();
-
-//        Log.e("tag", "getLocationFromMessage: "+locationData);
-        Location location= new Location(
+    private Location getLocationFromBundle(Bundle locationData) {
+        return new Location(
                 locationData.getString("location_name"),
                 locationData.getDouble("x"),
                 locationData.getDouble("y"),
                 locationData.getString("img_url")
         );
-        return location;
 
     }
 
