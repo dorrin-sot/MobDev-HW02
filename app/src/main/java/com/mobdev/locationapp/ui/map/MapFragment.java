@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -89,7 +90,7 @@ public class MapFragment extends Fragment implements
 
             mapboxMap.animateCamera(CameraUpdateFactory
                     .newCameraPosition(position), 3000);
-            ImageButton goToMyLocation = (ImageButton)getActivity().findViewById(R.id.imageButton);
+            FloatingActionButton goToMyLocation = getActivity().findViewById(R.id.goToMyLocationFab);
             goToMyLocation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

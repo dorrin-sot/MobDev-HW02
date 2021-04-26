@@ -109,10 +109,9 @@ public class Handler extends android.os.Handler {
                             .putBoolean(activity.getString(themeDark_title), goDark)
                             .apply();
 
-//                    activity.runOnUiThread(() -> setDefaultNightMode(
-//                            goDark ? MODE_NIGHT_YES : MODE_NIGHT_NO
-//                    ));
-                    activity.runOnUiThread(activity::recreate);
+                    activity.runOnUiThread(() -> setDefaultNightMode(
+                            goDark ? MODE_NIGHT_YES : MODE_NIGHT_NO
+                    ));
                 });
                 break;
             default:

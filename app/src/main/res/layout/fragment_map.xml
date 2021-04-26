@@ -11,13 +11,15 @@
         android:layout_height="match_parent"
         >
 
-        <ImageButton
-            android:id="@+id/imageButton"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/goToMyLocationFab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="20dp"
             android:contentDescription="@string/LocationButton"
-            android:src="@android:drawable/ic_menu_mylocation" />
+            android:src="@drawable/ic_baseline_my_location_24"
+            app:maxImageSize="35dp" />
     </com.mapbox.mapboxsdk.maps.MapView>
     <TextView
         android:id="@+id/text_map"

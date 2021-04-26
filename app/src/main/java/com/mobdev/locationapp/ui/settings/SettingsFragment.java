@@ -1,5 +1,6 @@
 package com.mobdev.locationapp.ui.settings;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.preference.Preference;
@@ -25,9 +26,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
     @Override
     public boolean onPreferenceClick(Preference preference) {
         if (preference.getKey().equals(getString(delete_data))) {
-            getHandler().sendMessage(
-                    getHandler().obtainMessage(DELETE_ALL_DATA.ordinal())
-            );
+            AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                    .setTitle("Delete Data?")
+                    .setMessage("Are you sure you want to delete all bookmarks?")
+                    .setPositiveButton("Erase", (dialog, which) ->
+                            getHandler().sendMessage(
+                                    getHandler().obtainMessage(DELETE_ALL_DATA.ordinal())
+                            ))
+                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                    .create();
+            alertDialog.show();
             return false;
         }
         return true;
