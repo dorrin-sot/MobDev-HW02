@@ -4,6 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:elevation="2dp"
+
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
     tools:context=".ui.bookmark.BookmarkFragment">
 
     <LinearLayout
@@ -16,13 +20,18 @@
         android:orientation="horizontal"
         android:id="@+id/linearLayoutSearch"
 
+
         >
 
         <EditText
             android:id="@+id/bookmark_search_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight=".95"
+            android:textSize="20dp"
+            android:layout_weight=".9"
+            android:drawableLeft="@drawable/ic_search"
+            android:layout_margin="5dp"
+
 
             />
         <ImageButton
@@ -31,8 +40,8 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_voice"
             android:background="@null"
-            android:layout_weight=".05"
-            android:layout_margin="3dp"
+            android:layout_weight=".1"
+
             />
 
     </LinearLayout>
@@ -43,7 +52,9 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayoutSearch"
-        android:layout_margin="5dp"/>
+        android:clipToPadding="false"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
