@@ -9,7 +9,16 @@
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        >
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:contentDescription="@string/LocationButton"
+            android:src="@android:drawable/ic_menu_mylocation" />
+    </com.mapbox.mapboxsdk.maps.MapView>
     <TextView
         android:id="@+id/text_map"
         android:layout_width="match_parent"
