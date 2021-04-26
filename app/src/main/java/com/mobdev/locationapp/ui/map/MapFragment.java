@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -88,6 +89,19 @@ public class MapFragment extends Fragment implements
 
             mapboxMap.animateCamera(CameraUpdateFactory
                     .newCameraPosition(position), 3000);
+            ImageButton goToMyLocation = (ImageButton)getActivity().findViewById(R.id.imageButton);
+            goToMyLocation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CameraPosition position = new CameraPosition.Builder()
+                            .target(new LatLng(locationComponent.getLastKnownLocation().getLatitude(), locationComponent.getLastKnownLocation().getLongitude())) // Sets the new camera position
+                            .zoom(17) // Sets the zoom
+                            .build(); // Creates a CameraPosition from the builder
+
+                    mapboxMap.animateCamera(CameraUpdateFactory
+                            .newCameraPosition(position), 3000);
+                }
+            });
 
 // Set the component's render mode
             locationComponent.setRenderMode(RenderMode.COMPASS);
