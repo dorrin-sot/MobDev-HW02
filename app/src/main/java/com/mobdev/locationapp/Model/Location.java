@@ -32,7 +32,7 @@ public class Location {
 
     public Location(String name, double x, double y, String imgURL) {
 //        print();
-        Log.e("location","location in Location: "+ name);
+//        Log.e("location","location in Location: "+ name);
         this.name = name;
         this.x = x;
         this.y = y;

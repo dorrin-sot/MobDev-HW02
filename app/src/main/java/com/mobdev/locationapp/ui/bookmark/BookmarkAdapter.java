@@ -136,7 +136,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
         android.os.Message message = new android.os.Message();
         message.what= Message.ADD_BOOKMARK.ordinal() ;
         Bundle bundle =new Bundle();
-        bundle.putString("location_name",newLocation.getLocationName());
+        bundle.putString("location_name",newLocation.getName());
         bundle.putDouble("x",newLocation.getX());
         bundle.putDouble("y",newLocation.getY());
         bundle.putString("img_url",newLocation.getImgURL());

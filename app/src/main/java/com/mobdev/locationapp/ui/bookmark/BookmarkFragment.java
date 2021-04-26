@@ -98,14 +98,14 @@ public class BookmarkFragment extends Fragment {
     }
 
     private void getBookmarkFromSQL() {
-        BookmarkAdapter.addBookmarkMessage(new Location("Havasu Falls"
-                ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
-        BookmarkAdapter.addBookmarkMessage(new Location("fasdfFalls"
-                ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
-        BookmarkAdapter.addBookmarkMessage(new Location("dfgu Falls"
-                ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
-        BookmarkAdapter.addBookmarkMessage(new Location("klk"
-                ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
+//        BookmarkAdapter.addBookmarkMessage(new Location("Havasu Falls"
+//                ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
+//        BookmarkAdapter.addBookmarkMessage(new Location("fasdfFalls"
+//                ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
+//        BookmarkAdapter.addBookmarkMessage(new Location("dfgu Falls"
+//                ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
+//        BookmarkAdapter.addBookmarkMessage(new Location("klk"
+//                ,2,1,"https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
         BookmarkAdapter.addBookmarkMessage(new Location("fhrg"
                 ,2,1,"https://i.imgur.com/ZcLLrkY.jpg"));
         BookmarkAdapter.addBookmarkMessage(new Location("Hava fgfg"

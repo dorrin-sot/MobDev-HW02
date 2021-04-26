@@ -39,13 +39,11 @@ public class Handler extends android.os.Handler {
                 );
                 break;
             case ADD_BOOKMARK:
-//                android.os.Message newMessage  =msg;
+
                 Bundle bundle = msg.getData();
                 executor.execute(() ->{
-//                    Log.e("chert", "handleMessage: "+msg );
                     Location location =   getLocationFromMessage(bundle);
-                    Log.e("exce locaioon: ", location.getLocationName());
-                    db.locationDao().addBookmark(location);
+//                    db.locationDao().addBookmark(location);
                     activityWeakReference.get().runOnUiThread(()->
                             BookmarkAdapter.addBookmark(location)
 
@@ -88,17 +86,16 @@ public class Handler extends android.os.Handler {
     }
 
     private Location getLocationFromMessage(Bundle locationData) {
-        Log.e("tag", "getLocationFromMessage: ");
+//        Log.e("tag", "getLocationFromMessage: ");
 //        Bundle locationData = msg.getData();
 
-        Log.e("tag", "getLocationFromMessage: "+locationData);
+//        Log.e("tag", "getLocationFromMessage: "+locationData);
         Location location= new Location(
                 locationData.getString("location_name"),
                 locationData.getDouble("x"),
                 locationData.getDouble("y"),
                 locationData.getString("img_url")
         );
-        location.setBookmarkName("alaki");
         return location;
 
     }
