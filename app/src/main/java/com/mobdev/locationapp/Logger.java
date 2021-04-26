@@ -24,7 +24,8 @@ public class Logger {
     }
 
     private static String tag() {
-        StackTraceElement stackTraceElement = new Throwable().getStackTrace()[1];
-        return stackTraceElement.getClassName() + "." + stackTraceElement.getMethodName();
+        StackTraceElement stackTraceElement = new Throwable().getStackTrace()[2];
+        String[] className = stackTraceElement.getClassName().split("\\.");
+        return className[className.length - 1] + "." + stackTraceElement.getMethodName();
     }
 }

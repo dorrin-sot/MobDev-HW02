@@ -6,22 +6,44 @@
     android:layout_height="match_parent"
     tools:context=".ui.bookmark.BookmarkFragment">
 
-<!--    <TextView-->
-<!--        android:id="@+id/text_bookmarks"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="8dp"-->
-<!--        android:layout_marginTop="8dp"-->
-<!--        android:layout_marginEnd="8dp"-->
-<!--        android:textAlignment="center"-->
-<!--        android:textSize="20sp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-<!--    -->
-    <androidx.recyclerview.widget.RecyclerView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/bookMark_RV"/>
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/bookMark_RV"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayoutSearch"
+
+        >
+        <EditText
+            android:id="@+id/bookmark_search_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="salam"
+            android:layout_weight=".95"
+
+            />
+        <ImageButton
+            android:id="@+id/bookmark_search_voice_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_voice"
+            android:background="@null"
+            android:layout_weight=".05"
+            android:layout_margin="3dp"
+            />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/bookMark_RV"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutSearch"
+        android:layout_margin="5dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

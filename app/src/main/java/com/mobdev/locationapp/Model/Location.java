@@ -1,5 +1,8 @@
 package com.mobdev.locationapp.Model;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -11,20 +14,29 @@ import java.util.List;
 
 @Entity(tableName = "Bookmarks", primaryKeys = {"X", "Y"})
 public class Location {
-    @ColumnInfo(name = "LOCATION_NAME")
-    private final String locationName;
+    @ColumnInfo(name = "NAME")
+    @NonNull
+    private final String name;
+
     @ColumnInfo(name = "X")
+    @NonNull
     private final double x;
+
     @ColumnInfo(name = "Y")
+    @NonNull
     private final double y;
 
-    @ColumnInfo(name = "BOOKMARK_NAME")
-    private String bookmarkName;
+    @ColumnInfo(name = "IMAGE_URL")
+    @NonNull
+    private final String imgURL;
 
-    public Location(String locationName, double x, double y) {
-        this.locationName = locationName;
+    public Location(String name, double x, double y, String imgURL) {
+//        print();
+//        Log.e("location","location in Location: "+ name);
+        this.name = name;
         this.x = x;
         this.y = y;
+        this.imgURL = imgURL;
     }
 
     @Dao
@@ -32,26 +44,25 @@ public class Location {
         @Query("SELECT * FROM Bookmarks")
         List<Location> getBookmarks();
 
-        @Query("SELECT * FROM Bookmarks WHERE BOOKMARK_NAME LIKE :bookmarkName")
-        com.mobdev.locationapp.Model.Location getBookmark(String bookmarkName);
+        @Query("SELECT * FROM Bookmarks WHERE NAME LIKE :name")
+        List<Location> searchBookmarks (String name);
+
+        @Query("SELECT * FROM Bookmarks WHERE NAME LIKE :name")
+        Location getBookmark(String name);
 
         @Query("SELECT * FROM Bookmarks WHERE EXISTS(" +
-                "SELECT * FROM Bookmarks WHERE BOOKMARK_NAME LIKE :bookmarkName" +
+                "SELECT * FROM Bookmarks WHERE NAME LIKE :name" +
                 ")")
-        boolean bookmarkExists(String bookmarkName);
-
-        @Query("UPDATE Bookmarks SET BOOKMARK_NAME = :bookmarkName WHERE LOCATION_NAME = :locationName")
-        void updateBookmarkName(String locationName, String bookmarkName);
+        boolean bookmarkExists(String name);
 
         @Insert
-        void addBookmark(com.mobdev.locationapp.Model.Location... location);
+        void addBookmark(Location... location);
 
         @Delete
-        void deleteBookmark(com.mobdev.locationapp.Model.Location... location);
-    }
+        void deleteBookmark(Location... location);
 
-    public String getLocationName() {
-        return locationName;
+        @Query("DELETE FROM Bookmarks")
+        void deleteAllBookmarks();
     }
 
     public double getX() {
@@ -62,11 +73,11 @@ public class Location {
         return y;
     }
 
-    public String getBookmarkName() {
-        return bookmarkName;
+    public String getName() {
+        return name;
     }
 
-    public void setBookmarkName(String bookmarkName) {
-        this.bookmarkName = bookmarkName;
+    public String getImgURL() {
+        return imgURL;
     }
 }

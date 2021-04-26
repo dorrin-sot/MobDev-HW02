@@ -1,38 +1,42 @@
 package com.mobdev.locationapp.ui.bookmark;
 
 import android.content.Context;
+
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
-
+import com.mobdev.locationapp.Handler.Message;
 import com.bumptech.glide.Glide;
+import com.mobdev.locationapp.Handler;
+import com.mobdev.locationapp.Logger;
+import com.mobdev.locationapp.Model.Location;
 import com.mobdev.locationapp.R;
 
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHolder> {
+public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHolder>  {
     private static final String TAG = "BookmarkAdapter";
-    private ArrayList<String>  imageSrcs_array=  new ArrayList<>();
-    private ArrayList<String>  name_array=  new ArrayList<>();
-    private ArrayList<String>  coordinatees_array=  new ArrayList<>();
+
+    public static ArrayList<Location> fullLocationList =  new ArrayList<>();
+    public static ArrayList<Location> tempLocationList =  new ArrayList<>();
+
     private Context mContext;
+    public static BookmarkAdapter adapter;
 
 
-    public BookmarkAdapter(Context mContext,ArrayList<String> imageSrcs_array, ArrayList<String> name_array, ArrayList<String> coordinatees_array) {
-        this.imageSrcs_array = imageSrcs_array;
-        this.name_array = name_array;
-        this.coordinatees_array = coordinatees_array;
+    public BookmarkAdapter(Context mContext) {
         this.mContext = mContext;
+        adapter=this;
     }
 
     @NonNull
@@ -48,25 +52,34 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
         Log.d(TAG, "onBindViewHolder: called");
         Glide.with(mContext)
                 .asBitmap()
-                .load(imageSrcs_array.get(position))
+                .load(tempLocationList.get(position).getImgURL())
                 .into(holder.image);
-        holder.coordinates.setText(coordinatees_array.get(position));
-        holder.name.setText(name_array.get(position));
-        holder.delete_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(mContext,name_array.get(position),Toast.LENGTH_LONG).show();
-            }
-        });
+        holder.coordinates.setText(tempLocationList.get(position).getX()+","+tempLocationList.get(position).getY());
+//        Log.e("location","location in holder: "+tempLocationList.get(position).getName());
+//        Logger.e("location in Location: "+);
+        holder.name.setText(tempLocationList.get(position).getName());
+//        holder.delete_btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(mContext,name_array.get(position),Toast.LENGTH_LONG).show();
+//
+//            }
+//        });
+
 
     }
 
     @Override
     public int getItemCount() {
-        return name_array.size();
+        return tempLocationList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public void filterList(ArrayList<Location> filteredList) {
+        tempLocationList=filteredList;
+        notifyDataSetChanged();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         CircleImageView image;
         TextView name;
         TextView coordinates;
@@ -79,7 +92,63 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
             coordinates= itemView.findViewById(R.id.coordinates);
             delete_btn= itemView.findViewById(R.id.bookmark_delete);
             parentLayout = itemView.findViewById(R.id.bookmark_parent);
-
+            delete_btn.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            if(v.equals(delete_btn)){
+                removeAt(getAdapterPosition());
+            }
+        }
+
+
+    }
+    public void removeAt(int adapterPosition) {
+        //todo fix removing stuff
+        removeFromFullLocationList(tempLocationList.get(adapterPosition).getName(),
+                tempLocationList.get(adapterPosition).getX(),tempLocationList.get(adapterPosition).getY());
+        tempLocationList.remove(adapterPosition);
+
+        notifyItemRemoved(adapterPosition);
+        notifyItemRangeChanged(adapterPosition, tempLocationList.size());
+    }
+
+    private void removeFromFullLocationList(String locationName , double x, double y) {
+        //todo complete this function
+        int position=-1;
+        for (int i=0 ;i <fullLocationList.size();i++){
+            Location location =fullLocationList.get(i);
+            if (location.getName().toLowerCase().equals(locationName.toLowerCase()) &&
+                location.getX()==x && location.getY()==y){
+                position=i;
+                break;
+            }
+        }
+        if(position==-1){
+            new Exception("position in removeFromFullLocationList is -1");
+        }
+        fullLocationList.remove(position);
+    }
+
+    public static void addBookmarkMessage(Location newLocation){
+        android.os.Message message = new android.os.Message();
+        message.what= Message.ADD_BOOKMARK.ordinal() ;
+        Bundle bundle =new Bundle();
+        bundle.putString("location_name",newLocation.getName());
+        bundle.putDouble("x",newLocation.getX());
+        bundle.putDouble("y",newLocation.getY());
+        bundle.putString("img_url",newLocation.getImgURL());
+        message.setData(bundle);
+        Handler.getHandler().sendMessage(message);
+
+
+
+    }
+    public static synchronized void addBookmark(Location location){
+        fullLocationList.add(location);
+        tempLocationList = (ArrayList<Location>) fullLocationList.clone();
+        adapter.notifyDataSetChanged();
     }
 }
