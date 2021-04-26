@@ -1,9 +1,9 @@
 package com.mobdev.locationapp;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -12,12 +12,20 @@ import com.mobdev.locationapp.ui.bookmark.BookmarkAdapter;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static android.content.Context.MODE_PRIVATE;
+import static android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+import static android.content.res.Configuration.UI_MODE_NIGHT_NO;
+import static android.content.res.Configuration.UI_MODE_NIGHT_YES;
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO;
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
+import static androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode;
 import static com.mobdev.locationapp.Logger.d;
 import static com.mobdev.locationapp.MainActivity.db;
+import static com.mobdev.locationapp.R.string.firstTime_title;
+import static com.mobdev.locationapp.R.string.themeLight_title;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 public class Handler extends android.os.Handler {
@@ -33,9 +41,6 @@ public class Handler extends android.os.Handler {
         Bundle bundle;
         AtomicReference<Location> location = new AtomicReference<>();
         switch (Message.values()[msg.what]) {
-            case SWITCH_THEME:
-                // TODO: 4/25/21  
-                break;
             case DELETE_ALL_DATA:
                 executor.execute(() ->
                         db.locationDao().deleteAllBookmarks()
@@ -74,25 +79,49 @@ public class Handler extends android.os.Handler {
                 );
                 break;
             case SEARCH_BOOKMARKS:
-                String searchPhrase = (String) msg.obj;
-                Logger.e("searchPhrase: ");
+                String searchPhrase = "%"+ msg.obj + "%";
                 Logger.e("searchPhrase: "+searchPhrase );
                 executor.execute(() -> {
-                            ArrayList<Location> bookmarks = (ArrayList<Location>) db.locationDao().searchBookmarks(searchPhrase);
-
+                            ArrayList<Location> bookmarks = new ArrayList<>(db.locationDao().searchBookmarks(searchPhrase));
                             activityWeakReference.get().runOnUiThread(() ->
                                     BookmarkAdapter.updateBookmarkList(bookmarks)
                             );
                         }
                 );
                 break;
+            case SET_THEME:
+                executor.execute(() -> {
+                    // TODO: 4/26/21  
+                    Activity activity = activityWeakReference.get();
+
+                    SharedPreferences theme_prefs = activity.getSharedPreferences("theme_prefs", MODE_PRIVATE);
+
+                    boolean goDark;
+                    int uiMode = activity.getResources().getConfiguration().uiMode & UI_MODE_NIGHT_MASK;
+                    switch (uiMode) {
+                        case UI_MODE_NIGHT_YES:
+                            goDark = theme_prefs.getBoolean(activity.getString(firstTime_title), true);
+                            break;
+                        case UI_MODE_NIGHT_NO:
+                            goDark = !theme_prefs.getBoolean(activity.getString(firstTime_title), true);
+                            break;
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + uiMode);
+                    }
+                    activity.runOnUiThread(() -> setDefaultNightMode(
+                            goDark ? MODE_NIGHT_YES : MODE_NIGHT_NO
+                    ));
+
+                    d("changed theme to " + (goDark ? "MODE_NIGHT_YES" : "MODE_NIGHT_NO"));
+
+                    theme_prefs.edit()
+                            .putBoolean(activity.getString(themeLight_title), !goDark)
+                            .apply();
+                });
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + Message.values()[msg.what]);
         }
-    }
-
-    private void updateBookmarkList(List<Location> bookmarks) {
-        // TODO: 4/25/21  
     }
 
     private Location getLocationFromBundle(Bundle locationData) {
@@ -127,6 +156,6 @@ public class Handler extends android.os.Handler {
         DELETE_BOOKMARK,
         GET_ALL_BOOKMARKS,
         SEARCH_BOOKMARKS,
-        // todo add for map stuff if needed
+        SET_THEME
     }
 }

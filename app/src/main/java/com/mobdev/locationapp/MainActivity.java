@@ -1,7 +1,6 @@
 package com.mobdev.locationapp;
 
 import android.os.Bundle;
-import android.os.Message;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -17,6 +16,7 @@ import java.lang.ref.WeakReference;
 import static androidx.navigation.Navigation.findNavController;
 import static androidx.navigation.ui.NavigationUI.setupActionBarWithNavController;
 import static androidx.navigation.ui.NavigationUI.setupWithNavController;
+import static com.mobdev.locationapp.Handler.Message.SET_THEME;
 import static com.mobdev.locationapp.Handler.getHandler;
 import static com.mobdev.locationapp.Logger.d;
 import static com.mobdev.locationapp.R.id.navigation_bookmark;
@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
         new Handler(getMainLooper());
         getHandler().setActivityWeakReference(new WeakReference<>(this));
+
+        getHandler().sendMessage(getHandler().obtainMessage(SET_THEME.ordinal())); // set app theme
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -94,5 +96,4 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         MapFragment.mapView.onDestroy();
     }
-
 }
