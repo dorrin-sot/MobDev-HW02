@@ -17,11 +17,11 @@
         android:id="@+id/linearLayoutSearch"
 
         >
+
         <EditText
             android:id="@+id/bookmark_search_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="salam"
             android:layout_weight=".95"
 
             />

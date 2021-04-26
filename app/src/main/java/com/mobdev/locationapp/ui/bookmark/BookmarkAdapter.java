@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -26,7 +27,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHolder>  {
-    private static final String TAG = "BookmarkAdapter";
+
 
     public static ArrayList<Location> bookmarkList =  new ArrayList<>();
 
@@ -69,7 +70,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder: called");
+        Logger.i("onBindViewHolder: called");
         Glide.with(mContext)
                 .asBitmap()
                 .load(bookmarkList.get(position).getImgURL())
@@ -112,12 +113,15 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
             if(v.equals(delete_btn)){
                 removeBookmarkMessage(getAdapterPosition());
             }
+            else {
+                Toast.makeText(v.getContext(),"click on other parts",Toast.LENGTH_SHORT).show();
+                //todo send coordinates to mapview
+            }
         }
 
 
     }
     public void removeBookmarkMessage(int adapterPosition) {
-        //todo fix removing stuff
         Location newLocation = bookmarkList.get(adapterPosition);
         android.os.Message message = new android.os.Message();
         message.what= Message.DELETE_BOOKMARK.ordinal();
