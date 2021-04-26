@@ -31,12 +31,12 @@ public class MapFragment extends Fragment implements
     private MapboxMap mapboxMap;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        Mapbox.getInstance(MainActivity.activity,getString(R.string.mapbox_access_token));
+        Mapbox.getInstance(getContext(),getString(R.string.mapbox_access_token));
        View view = inflater.inflate(R.layout.fragment_map, container, false);
 
 // Mapbox access token is configured here. This needs to be called either in your application
 // object or in the same activity which contains the mapview.
-        Mapbox.getInstance(MainActivity.activity, getString(R.string.mapbox_access_token));
+       // Mapbox.getInstance(MainActivity.activity, getString(R.string.mapbox_access_token));
 
 // This contains the MapView in XML and needs to be called after the access token is configured.
        // setContentView(R.layout.activity_location_component);
@@ -63,14 +63,14 @@ public class MapFragment extends Fragment implements
     @SuppressWarnings( {"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
 // Check if permissions are enabled and if not request
-        if (PermissionsManager.areLocationPermissionsGranted(MainActivity.activity)) {
+        if (PermissionsManager.areLocationPermissionsGranted(getContext())) {
 
 // Get an instance of the component
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
 
 // Activate with options
             locationComponent.activateLocationComponent(
-                    LocationComponentActivationOptions.builder(MainActivity.activity, loadedMapStyle).build());
+                    LocationComponentActivationOptions.builder(getContext(), loadedMapStyle).build());
 
 // Enable to make component visible
             locationComponent.setLocationComponentEnabled(true);
@@ -82,7 +82,7 @@ public class MapFragment extends Fragment implements
             locationComponent.setRenderMode(RenderMode.COMPASS);
         } else {
             permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(MainActivity.activity);
+            permissionsManager.requestLocationPermissions(getActivity());
         }
     }
 
@@ -93,7 +93,7 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain) {
-        Toast.makeText(MainActivity.activity, R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -106,7 +106,7 @@ public class MapFragment extends Fragment implements
                 }
             });
         } else {
-            Toast.makeText(MainActivity.activity, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
            // finish();
         }
     }
