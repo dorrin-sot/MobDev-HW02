@@ -12,6 +12,9 @@ import androidx.fragment.app.Fragment;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
@@ -76,7 +79,15 @@ public class MapFragment extends Fragment implements
             locationComponent.setLocationComponentEnabled(true);
 
 // Set the component's camera mode
-            locationComponent.setCameraMode(CameraMode.TRACKING);
+           // locationComponent.zoomWhileTracking(17);
+           // locationComponent.setCameraMode(CameraMode.TRACKING);
+            CameraPosition position = new CameraPosition.Builder()
+                    .target(new LatLng(locationComponent.getLastKnownLocation().getLatitude(), locationComponent.getLastKnownLocation().getLongitude())) // Sets the new camera position
+                    .zoom(17) // Sets the zoom
+                    .build(); // Creates a CameraPosition from the builder
+
+            mapboxMap.animateCamera(CameraUpdateFactory
+                    .newCameraPosition(position), 3000);
 
 // Set the component's render mode
             locationComponent.setRenderMode(RenderMode.COMPASS);
