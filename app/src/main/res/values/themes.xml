@@ -8,6 +8,7 @@
         <item name="colorOnSecondary">@color/secondary_text</item>
         <item name="iconTint">@color/icons</item>
         <item name="divider">@color/divider</item>
+        <item name="placeholder_color">@color/bookmark_item_dark</item>
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>
@@ -20,6 +21,7 @@
         <item name="colorOnSecondary">@color/secondary_text</item>
         <item name="iconTint">@color/icons</item>
         <item name="divider">@color/divider</item>
+        <item name="placeholder_color">@color/bookmark_item</item>
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
     </style>

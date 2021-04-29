@@ -93,8 +93,10 @@ public class BookmarkFragment extends Fragment {
     private void getBookmarkFromSQL() {
         BookmarkAdapter.updateBookmarkListMessage();
         Random random = new Random();
+//        BookmarkAdapter.addBookmarkMessage(""+random.nextInt()
+//                ,random.nextInt()/1000,random.nextInt()/1000,"https://i.imgur.com/ZcLLrkY.jpg");
         BookmarkAdapter.addBookmarkMessage(""+random.nextInt()
-                ,random.nextInt()/1000,random.nextInt()/1000,"https://i.imgur.com/ZcLLrkY.jpg");
+                ,random.nextInt()/1000,random.nextInt()/1000,"https://i.imgur.com/fgZcsfdLLrkY.jpg");
 
     }
 

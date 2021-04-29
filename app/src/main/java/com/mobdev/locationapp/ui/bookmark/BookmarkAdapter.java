@@ -74,6 +74,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
         Glide.with(mContext)
                 .asBitmap()
                 .load(bookmarkList.get(position).getImgURL())
+                .placeholder(R.drawable.ic_globe)
                 .into(holder.image);
         holder.coordinates.setText(bookmarkList.get(position).getX()+","+ bookmarkList.get(position).getY());
         holder.name.setText(bookmarkList.get(position).getName());
@@ -116,7 +117,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
             else {
                 Toast.makeText(v.getContext(),"click on other parts",Toast.LENGTH_SHORT).show();
                 //todo send coordinates to mapview
-                
+
             }
         }
 
