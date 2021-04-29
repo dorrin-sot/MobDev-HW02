@@ -13,6 +13,12 @@
     <string name="delete_data">Delete Data</string>
     <string name="delete_app_data_from_phone">Delete App Data From Phone</string>
     <!--    preferences     -->
+    <string name="theme_title">theme</string>
+    <integer name="theme">0</integer> <!--at first, is phone default-->
     <string name="themeDark_title">themeDark</string>
     <bool name="themeDark">false</bool>
+
+    <integer name="theme_enum_default">0</integer>
+    <integer name="theme_enum_light">1</integer>
+    <integer name="theme_enum_dark">2</integer>
 </resources>
