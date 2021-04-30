@@ -1,9 +1,12 @@
 package com.mobdev.locationapp.ui.map;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -14,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -26,32 +30,37 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mobdev.locationapp.MainActivity;
+import com.mobdev.locationapp.Model.Location;
 import com.mobdev.locationapp.R;
+import com.mobdev.locationapp.ui.bookmark.BookmarkAdapter;
 
 import java.util.List;
+
 public class MapFragment extends Fragment implements
-        OnMapReadyCallback, PermissionsListener{
+        OnMapReadyCallback, PermissionsListener {
     public static MapView mapView;
     private PermissionsManager permissionsManager;
     private MapboxMap mapboxMap;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        Mapbox.getInstance(getContext(),getString(R.string.mapbox_access_token));
-       View view = inflater.inflate(R.layout.fragment_map, container, false);
-
+        Mapbox.getInstance(getContext(), getString(R.string.mapbox_access_token));
+        View view = inflater.inflate(R.layout.fragment_map, container, false);
 // Mapbox access token is configured here. This needs to be called either in your application
 // object or in the same activity which contains the mapview.
-       // Mapbox.getInstance(MainActivity.activity, getString(R.string.mapbox_access_token));
+        // Mapbox.getInstance(MainActivity.activity, getString(R.string.mapbox_access_token));
 
 // This contains the MapView in XML and needs to be called after the access token is configured.
-       // setContentView(R.layout.activity_location_component);
+        // setContentView(R.layout.activity_location_component);
 
         mapView = view.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-       // return inflater.inflate(R.layout.fragment_map, container, false);
+        // return inflater.inflate(R.layout.fragment_map, container, false);
         return view;
     }
+
+
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         MapFragment.this.mapboxMap = mapboxMap;
@@ -61,11 +70,39 @@ public class MapFragment extends Fragment implements
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
                         enableLocationComponent(style);
+
                     }
                 });
+        mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
+            @Override
+            public boolean onMapClick(@NonNull LatLng point) {
+                mapboxMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(point.getLatitude(), point.getLongitude()))
+                );
+                // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+// 2. Chain together various setter methods to set the dialog characteristics
+                EditText editText = new EditText(getActivity());
+                builder.setView(editText)
+                        .setTitle("Save Location (" + point.getLatitude() + "," + point.getLongitude() + ")")
+                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                String name = editText.getText().toString();
+                                BookmarkAdapter.addBookmarkMessage(new Location(name,point.getLatitude(),point.getLongitude(),"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flaticon.com%2Fpremium-icon%2Flocation_1176403&psig=AOvVaw3KK593e2GunqMWVPN1h82Z&ust=1619901219552000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCNiJtcDopvACFQAAAAAdAAAAABAD"));
+                            }
+                        });
+
+// 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return true;
+            }
+        });
+
     }
 
-    @SuppressWarnings( {"MissingPermission"})
+    @SuppressWarnings({"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
 // Check if permissions are enabled and if not request
         if (PermissionsManager.areLocationPermissionsGranted(getContext())) {
@@ -81,8 +118,8 @@ public class MapFragment extends Fragment implements
             locationComponent.setLocationComponentEnabled(true);
 
 // Set the component's camera mode
-           // locationComponent.zoomWhileTracking(17);
-           // locationComponent.setCameraMode(CameraMode.TRACKING);
+            // locationComponent.zoomWhileTracking(17);
+            // locationComponent.setCameraMode(CameraMode.TRACKING);
             CameraPosition position = new CameraPosition.Builder()
                     .target(new LatLng(locationComponent.getLastKnownLocation().getLatitude(), locationComponent.getLastKnownLocation().getLongitude())) // Sets the new camera position
                     .zoom(17) // Sets the zoom
@@ -133,7 +170,7 @@ public class MapFragment extends Fragment implements
             });
         } else {
             Toast.makeText(getContext(), R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
-           // finish();
+            // finish();
         }
     }
 
