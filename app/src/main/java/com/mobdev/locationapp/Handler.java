@@ -18,14 +18,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import static android.content.Context.MODE_PRIVATE;
 import static android.content.res.Configuration.UI_MODE_NIGHT_MASK;
 import static android.content.res.Configuration.UI_MODE_NIGHT_YES;
-import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO;
-import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
-import static androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode;
 import static com.mobdev.locationapp.Logger.d;
 import static com.mobdev.locationapp.Logger.e;
-import static com.mobdev.locationapp.Logger.i;
 import static com.mobdev.locationapp.MainActivity.db;
+import static com.mobdev.locationapp.R.integer.theme_enum_dark;
+import static com.mobdev.locationapp.R.integer.theme_enum_default;
+import static com.mobdev.locationapp.R.integer.theme_enum_light;
 import static com.mobdev.locationapp.R.string.themeDark_title;
+import static com.mobdev.locationapp.R.string.theme_title;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 public class Handler extends android.os.Handler {
@@ -90,28 +90,38 @@ public class Handler extends android.os.Handler {
                 );
                 break;
             case SET_THEME:
-                boolean doSwitchTheme = msg.arg1 == 1;
                 executor.execute(() -> {
                     Activity activity = activityWeakReference.get();
 
                     SharedPreferences theme_prefs = activity.getSharedPreferences("theme_prefs", MODE_PRIVATE);
 
-                    boolean defaultDark = (activity.getResources().getConfiguration().uiMode & UI_MODE_NIGHT_MASK)
-                                    == UI_MODE_NIGHT_YES,
-                            goDark = doSwitchTheme & !defaultDark;
+                    int currentTheme = theme_prefs.getInt(activity.getString(theme_title), 0),
+                            defaultTheme = activity.getResources().getInteger(theme_enum_default),
+                            darkTheme = activity.getResources().getInteger(theme_enum_dark);
 
-                    i("doSwitchTheme = " + doSwitchTheme +
-                            ", defaultDark = " + defaultDark +
-                            ", goDark = " + goDark);
-                    e("changed theme to " + (goDark ? "MODE_NIGHT_YES" : "MODE_NIGHT_NO"));
+                    boolean nowDark;
+                    if (currentTheme == defaultTheme)
+                        nowDark = (activity.getResources().getConfiguration().uiMode & UI_MODE_NIGHT_MASK)
+                                == UI_MODE_NIGHT_YES;
+                    else
+                        nowDark = (currentTheme == darkTheme);
+                    boolean goDark = !nowDark;
+
+                    int newTheme = activity.getResources().getInteger(
+                            goDark ? theme_enum_dark : theme_enum_light
+                    );
+
+                    d("nowDark = " + nowDark +
+                            ", goDark = " + goDark +
+                            ", currentTheme = " + currentTheme+
+                            ", newTheme = " + newTheme);
 
                     theme_prefs.edit()
+                            .putInt(activity.getString(theme_title), newTheme)
                             .putBoolean(activity.getString(themeDark_title), goDark)
                             .apply();
 
-                    activity.runOnUiThread(() -> setDefaultNightMode(
-                            goDark ? MODE_NIGHT_YES : MODE_NIGHT_NO
-                    ));
+                    activity.runOnUiThread(activity::recreate);
                 });
                 break;
             default:

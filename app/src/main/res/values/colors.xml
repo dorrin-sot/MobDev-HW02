@@ -8,5 +8,7 @@
     <color name="secondary_text">#757575</color>
     <color name="icons">#FFFFFF</color>
     <color name="bookmark_item">#FFFFFF</color>
+    <color name="bookmark_item_dark">#536dfe</color>
+
     <color name="divider">#BDBDBD</color>
 </resources>

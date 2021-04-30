@@ -74,6 +74,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
         Glide.with(mContext)
                 .asBitmap()
                 .load(bookmarkList.get(position).getImgURL())
+                .placeholder(R.drawable.ic_globe)
                 .into(holder.image);
         holder.coordinates.setText(bookmarkList.get(position).getX()+","+ bookmarkList.get(position).getY());
         holder.name.setText(bookmarkList.get(position).getName());
@@ -116,6 +117,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
             else {
                 Toast.makeText(v.getContext(),"click on other parts",Toast.LENGTH_SHORT).show();
                 //todo send coordinates to mapview
+
             }
         }
 
@@ -136,14 +138,14 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
 
     }
 
-    public static void addBookmarkMessage(Location newLocation){
+    public static void addBookmarkMessage( String name , double x,double y,String imgUrl){
         android.os.Message message = new android.os.Message();
         message.what= Message.ADD_BOOKMARK.ordinal() ;
         Bundle bundle =new Bundle();
-        bundle.putString("location_name",newLocation.getName());
-        bundle.putDouble("x",newLocation.getX());
-        bundle.putDouble("y",newLocation.getY());
-        bundle.putString("img_url",newLocation.getImgURL());
+        bundle.putString("location_name",name);
+        bundle.putDouble("x",x);
+        bundle.putDouble("y",y);
+        bundle.putString("img_url",imgUrl);
         message.setData(bundle);
         sendMessageToHandler(message);
 

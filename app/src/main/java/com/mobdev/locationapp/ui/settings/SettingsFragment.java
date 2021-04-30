@@ -43,13 +43,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        getHandler().sendMessage(
-                getHandler().obtainMessage(
-                        SET_THEME.ordinal(), // set app theme
-                        1, // true -> in settings page
-                        0
-                )
-        );
-        return true;
+        if (preference.getKey().equals(getString(themeDark_title))) {
+            getHandler().sendMessage(
+                    getHandler().obtainMessage(
+                            SET_THEME.ordinal(), // set app theme
+                            1, // true -> in settings page
+                            0
+                    )
+            );
+            return true;
+        }
+        return false;
     }
 }

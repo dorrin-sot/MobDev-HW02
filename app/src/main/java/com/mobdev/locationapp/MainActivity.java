@@ -13,6 +13,8 @@ import com.mobdev.locationapp.ui.map.MapFragment;
 
 import java.lang.ref.WeakReference;
 
+import static android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+import static android.content.res.Configuration.UI_MODE_NIGHT_YES;
 import static androidx.navigation.Navigation.findNavController;
 import static androidx.navigation.ui.NavigationUI.setupActionBarWithNavController;
 import static androidx.navigation.ui.NavigationUI.setupWithNavController;
@@ -22,6 +24,12 @@ import static com.mobdev.locationapp.R.id.nav_view;
 import static com.mobdev.locationapp.R.id.navigation_bookmark;
 import static com.mobdev.locationapp.R.id.navigation_map;
 import static com.mobdev.locationapp.R.id.navigation_settings;
+import static com.mobdev.locationapp.R.integer.theme_enum_dark;
+import static com.mobdev.locationapp.R.integer.theme_enum_default;
+import static com.mobdev.locationapp.R.layout.activity_main;
+import static com.mobdev.locationapp.R.string.theme_title;
+import static com.mobdev.locationapp.R.style.DarkLocationApp;
+import static com.mobdev.locationapp.R.style.LightLocationApp;
 
 public class MainActivity extends AppCompatActivity {
     static LocationDB db;
@@ -29,8 +37,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         d("");
+        handleTheme();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(activity_main);
 
         new Handler(getMainLooper());
         getHandler().setActivityWeakReference(new WeakReference<>(this));
@@ -42,6 +51,20 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = findNavController(this, R.id.nav_host_fragment);
         setupActionBarWithNavController(this, navController, appBarConfiguration);
         setupWithNavController(navView, navController);
+    }
+
+    private void handleTheme() {
+        int themeId = getSharedPreferences("theme_prefs", MODE_PRIVATE)
+                .getInt(getString(theme_title), 0);
+
+        boolean goDark;
+        if (themeId == getResources().getInteger(theme_enum_default))
+            goDark = (getResources().getConfiguration().uiMode & UI_MODE_NIGHT_MASK)
+                    == UI_MODE_NIGHT_YES;
+        else
+            goDark = themeId == getResources().getInteger(theme_enum_dark);
+        setTheme(goDark ? DarkLocationApp : LightLocationApp);
+        d("theme = " + (goDark ? "Dark" : "Light"));
     }
 
     @Override
@@ -60,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         d("Initialized database");
     }
+
     @Override
     protected void onResume() {
         super.onResume();
