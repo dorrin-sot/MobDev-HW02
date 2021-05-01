@@ -2,7 +2,6 @@ package com.mobdev.locationapp.ui.bookmark;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -19,14 +19,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mobdev.locationapp.Logger;
-import com.mobdev.locationapp.Model.Location;
 import com.mobdev.locationapp.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Random;
 
+import static android.Manifest.permission.RECORD_AUDIO;
 import static android.app.Activity.RESULT_OK;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static androidx.core.content.ContextCompat.checkSelfPermission;
+import static com.mobdev.locationapp.Logger.d;
+import static com.mobdev.locationapp.Logger.e;
 
 public class BookmarkFragment extends Fragment {
     private static final int REQUESR_SPEACH_CODE = 1000;
@@ -65,23 +68,44 @@ public class BookmarkFragment extends Fragment {
     }
 
     private void lunchSpeakIntent(View view) {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"please name your desired location");
-        try {
-            startActivityForResult(intent,REQUESR_SPEACH_CODE);
-        }
-        catch (Exception e){
-            Toast.makeText(view.getContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+        boolean hasMicrophonePermission = hasMicrophonePermission();
+        e("called - hasMicrophonePermission = " + hasMicrophonePermission);
+        if (hasMicrophonePermission) {
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "please name your desired location");
+            try {
+                startActivityForResult(intent, REQUESR_SPEACH_CODE);
+            } catch (Exception e) {
+                Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            askForMicrophonePermission();
         }
     }
 
+    private void askForMicrophonePermission() {
+        requestPermissions(new String[]{RECORD_AUDIO}, 0);
+    }
 
+    private boolean hasMicrophonePermission() {
+        return checkSelfPermission(getContext(), RECORD_AUDIO) == PERMISSION_GRANTED;
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (grantResults[0]) {
+            case 0: // RECORD_AUDIO
+                bookmarkSearch_voice_btn.performClick();
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
 
     private void init(View view){
-        Logger.d("initImageBitmaps: preparing bitmaps.");
+        d("initImageBitmaps: preparing bitmaps.");
         initRecyclerView(view);
         getBookmarkFromSQL();
 

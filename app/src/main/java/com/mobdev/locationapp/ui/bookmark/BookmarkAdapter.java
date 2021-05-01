@@ -39,8 +39,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
     public static BookmarkAdapter adapter;
 
 
-    public BookmarkAdapter(Context mContext) {
-        this.mContext = mContext;
+    public BookmarkAdapter() {
         adapter=this;
     }
 

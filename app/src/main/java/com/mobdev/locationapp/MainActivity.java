@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 //        Logger.d("initRecyclerView: recycler view init");
 //        RecyclerView recyclerView = findViewById(R.id.bookMark_RV);
 
-        BookmarkAdapter adapter = new BookmarkAdapter(getApplication());
+        BookmarkAdapter adapter = new BookmarkAdapter();
 //        Logger.e("recycler: "+recyclerView.toString());
         Logger.e("adapter: "+adapter.toString());
 //        recyclerView.setAdapter(adapter);
