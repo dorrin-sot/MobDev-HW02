@@ -79,21 +79,18 @@ public class MapFragment extends Fragment implements
                 mapboxMap.addMarker(new MarkerOptions()
                         .position(new LatLng(point.getLatitude(), point.getLongitude()))
                 );
-                // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-// 2. Chain together various setter methods to set the dialog characteristics
                 EditText editText = new EditText(getActivity());
                 builder.setView(editText)
                         .setTitle("Save Location (" + point.getLatitude() + "," + point.getLongitude() + ")")
                         .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 String name = editText.getText().toString();
-                                BookmarkAdapter.addBookmarkMessage(new Location(name,point.getLatitude(),point.getLongitude(),"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flaticon.com%2Fpremium-icon%2Flocation_1176403&psig=AOvVaw3KK593e2GunqMWVPN1h82Z&ust=1619901219552000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCNiJtcDopvACFQAAAAAdAAAAABAD"));
+                                BookmarkAdapter.addBookmarkMessage(name,point.getLatitude(),point.getLongitude(),"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.flaticon.com%2Fpremium-icon%2Flocation_1176403&psig=AOvVaw3KK593e2GunqMWVPN1h82Z&ust=1619901219552000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCNiJtcDopvACFQAAAAAdAAAAABAD");
                             }
                         });
 
-// 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
                 AlertDialog dialog = builder.create();
                 dialog.show();
                 return true;
