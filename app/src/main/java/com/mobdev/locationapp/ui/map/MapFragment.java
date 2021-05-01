@@ -76,6 +76,7 @@ public class MapFragment extends Fragment implements
         mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
             @Override
             public boolean onMapClick(@NonNull LatLng point) {
+                mapboxMap.clear();
                 mapboxMap.addMarker(new MarkerOptions()
                         .position(new LatLng(point.getLatitude(), point.getLongitude()))
                 );
@@ -125,6 +126,8 @@ public class MapFragment extends Fragment implements
                 mapboxMap.animateCamera(CameraUpdateFactory
                         .newCameraPosition(position), 3000);
             }else {
+                mapboxMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(getArguments().getFloat("bookmark_x"), getArguments().getFloat("bookmark_y"))));
                 CameraPosition position = new CameraPosition.Builder()
                         .target(new LatLng(getArguments().getFloat("bookmark_x"), getArguments().getFloat("bookmark_y"))) // Sets the new camera position
                         .zoom(17) // Sets the zoom
