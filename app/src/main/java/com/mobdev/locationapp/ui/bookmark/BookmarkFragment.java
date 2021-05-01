@@ -103,10 +103,15 @@ public class BookmarkFragment extends Fragment {
 
 
     private void initRecyclerView(View view) {
+//        View view = inflater.inflate(R.layout.fragment_bookmarks, container, false);
+
         Logger.d("initRecyclerView: recycler view init");
         RecyclerView recyclerView = view.findViewById(R.id.bookMark_RV);
-        BookmarkAdapter adapter = new BookmarkAdapter(view.getContext());
-        recyclerView.setAdapter(adapter);
+
+//        BookmarkAdapter adapter = new BookmarkAdapter(getApplication());
+//        Logger.e("recycler: "+recyclerView.toString());
+//        Logger.e("adapter: "+adapter.toString());
+        recyclerView.setAdapter(BookmarkAdapter.adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
     }
 

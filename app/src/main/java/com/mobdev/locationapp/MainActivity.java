@@ -9,6 +9,7 @@ import androidx.room.Room;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mobdev.locationapp.Model.LocationDB;
+import com.mobdev.locationapp.ui.bookmark.BookmarkAdapter;
 import com.mobdev.locationapp.ui.map.MapFragment;
 
 import java.lang.ref.WeakReference;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = findNavController(this, R.id.nav_host_fragment);
         setupActionBarWithNavController(this, navController, appBarConfiguration);
         setupWithNavController(navView, navController);
+        initAdapter();
     }
 
     private void handleTheme() {
@@ -65,6 +67,18 @@ public class MainActivity extends AppCompatActivity {
             goDark = themeId == getResources().getInteger(theme_enum_dark);
         setTheme(goDark ? DarkLocationApp : LightLocationApp);
         d("theme = " + (goDark ? "Dark" : "Light"));
+    }
+    private void initAdapter() {
+//        View view = inflater.inflate(R.layout.fragment_bookmarks, container, false);
+
+//        Logger.d("initRecyclerView: recycler view init");
+//        RecyclerView recyclerView = findViewById(R.id.bookMark_RV);
+
+        BookmarkAdapter adapter = new BookmarkAdapter(getApplication());
+//        Logger.e("recycler: "+recyclerView.toString());
+        Logger.e("adapter: "+adapter.toString());
+//        recyclerView.setAdapter(adapter);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override
