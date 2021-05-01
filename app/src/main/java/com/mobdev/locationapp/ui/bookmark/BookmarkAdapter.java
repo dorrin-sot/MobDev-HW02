@@ -117,7 +117,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
                 removeBookmarkMessage(getAdapterPosition());
             }
             else {
-                Toast.makeText(v.getContext(),"click on other parts",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(v.getContext(),"click on other parts",Toast.LENGTH_SHORT).show();
                 Bundle bundle = new Bundle();
 
                 bundle.putFloat("bookmark_x", (float) coorX);

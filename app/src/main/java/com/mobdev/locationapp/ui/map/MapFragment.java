@@ -88,6 +88,7 @@ public class MapFragment extends Fragment implements
                 EditText editText = new EditText(getActivity());
                 builder.setView(editText)
                         .setTitle("Save Location (" + point.getLatitude() + "," + point.getLongitude() + ")")
+                        .setMessage("Location Name")
                         .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 String name = editText.getText().toString();
