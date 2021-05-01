@@ -117,13 +117,23 @@ public class MapFragment extends Fragment implements
 // Set the component's camera mode
             // locationComponent.zoomWhileTracking(17);
             // locationComponent.setCameraMode(CameraMode.TRACKING);
-            CameraPosition position = new CameraPosition.Builder()
-                    .target(new LatLng(locationComponent.getLastKnownLocation().getLatitude(), locationComponent.getLastKnownLocation().getLongitude())) // Sets the new camera position
-                    .zoom(17) // Sets the zoom
-                    .build(); // Creates a CameraPosition from the builder
+            if(getArguments()==null) {
+                CameraPosition position = new CameraPosition.Builder()
+                        .target(new LatLng(locationComponent.getLastKnownLocation().getLatitude(), locationComponent.getLastKnownLocation().getLongitude())) // Sets the new camera position
+                        .zoom(17) // Sets the zoom
+                        .build(); // Creates a CameraPosition from the builder
+                mapboxMap.animateCamera(CameraUpdateFactory
+                        .newCameraPosition(position), 3000);
+            }else {
+                CameraPosition position = new CameraPosition.Builder()
+                        .target(new LatLng(getArguments().getFloat("bookmark_x"), getArguments().getFloat("bookmark_y"))) // Sets the new camera position
+                        .zoom(17) // Sets the zoom
+                        .build(); // Creates a CameraPosition from the builder
 
-            mapboxMap.animateCamera(CameraUpdateFactory
-                    .newCameraPosition(position), 3000);
+                mapboxMap.animateCamera(CameraUpdateFactory
+                        .newCameraPosition(position), 3000);
+            }
+
             FloatingActionButton goToMyLocation = getActivity().findViewById(R.id.goToMyLocationFab);
             goToMyLocation.setOnClickListener(new View.OnClickListener() {
                 @Override

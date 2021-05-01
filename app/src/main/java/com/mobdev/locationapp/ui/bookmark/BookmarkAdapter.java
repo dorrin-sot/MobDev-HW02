@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 import com.mobdev.locationapp.Handler.Message;
 import com.bumptech.glide.Glide;
@@ -116,8 +117,13 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
             }
             else {
                 Toast.makeText(v.getContext(),"click on other parts",Toast.LENGTH_SHORT).show();
-                //todo send coordinates to mapview
+                Bundle bundle = new Bundle();
+                float x= Float.parseFloat(coordinates.getText().toString().split(",")[0]);
+                float y= Float.parseFloat(coordinates.getText().toString().split(",")[1]);
 
+                bundle.putFloat("bookmark_x",x);
+                bundle.putFloat("bookmark_y",y);
+                Navigation.findNavController(v).navigate(R.id.action_navigation_show_bookmark_in_map, bundle);
             }
         }
 
