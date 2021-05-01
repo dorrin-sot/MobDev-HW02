@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Location App</string>
+
+<string name="app_name">Location App</string>
     <string name="title_bookmarks">Bookmarks</string>
     <string name="title_map">Map</string>
     <string name="title_settings">Settings</string>
@@ -16,6 +17,8 @@
     <string name="theme_title">theme</string>
     <integer name="theme">0</integer> <!--at first, is phone default-->
     <string name="themeDark_title">themeDark</string>
+    <string name="DarkLocationTheme">DarkLocationTheme</string>
+    <string name="LightLocationTheme">LightLocationTheme</string>
     <bool name="themeDark">false</bool>
 
     <integer name="theme_enum_default">0</integer>
