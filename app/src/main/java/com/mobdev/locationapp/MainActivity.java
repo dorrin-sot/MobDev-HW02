@@ -1,6 +1,9 @@
 package com.mobdev.locationapp;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.TypedValue;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -21,6 +24,7 @@ import static androidx.navigation.ui.NavigationUI.setupActionBarWithNavControlle
 import static androidx.navigation.ui.NavigationUI.setupWithNavController;
 import static com.mobdev.locationapp.Handler.getHandler;
 import static com.mobdev.locationapp.Logger.d;
+import static com.mobdev.locationapp.Logger.e;
 import static com.mobdev.locationapp.R.id.nav_view;
 import static com.mobdev.locationapp.R.id.navigation_bookmark;
 import static com.mobdev.locationapp.R.id.navigation_map;
@@ -28,6 +32,7 @@ import static com.mobdev.locationapp.R.id.navigation_settings;
 import static com.mobdev.locationapp.R.integer.theme_enum_dark;
 import static com.mobdev.locationapp.R.integer.theme_enum_default;
 import static com.mobdev.locationapp.R.layout.activity_main;
+import static com.mobdev.locationapp.R.string.themeDark_title;
 import static com.mobdev.locationapp.R.string.theme_title;
 import static com.mobdev.locationapp.R.style.DarkLocationApp;
 import static com.mobdev.locationapp.R.style.LightLocationApp;
@@ -55,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         initAdapter();
     }
 
-    private void handleTheme() {
+    private void handleTheme()  {
         int themeId = getSharedPreferences("theme_prefs", MODE_PRIVATE)
                 .getInt(getString(theme_title), 0);
 
@@ -67,6 +72,18 @@ public class MainActivity extends AppCompatActivity {
             goDark = themeId == getResources().getInteger(theme_enum_dark);
         setTheme(goDark ? DarkLocationApp : LightLocationApp);
         d("theme = " + (goDark ? "Dark" : "Light"));
+//        PackageInfo packageInfo = null;
+//        try {
+//            packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_META_DATA);
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        int themeResId = packageInfo.applicationInfo.theme;
+//        e("theme= "+getResources().getResourceName(themeResId));
+        TypedValue outValue = new TypedValue();
+        getTheme().resolveAttribute(R.attr.name, outValue, true);
+        e("theme= "+outValue.string);
+
     }
     private void initAdapter() {
 //        View view = inflater.inflate(R.layout.fragment_bookmarks, container, false);

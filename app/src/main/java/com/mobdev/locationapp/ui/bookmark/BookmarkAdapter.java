@@ -3,7 +3,6 @@ package com.mobdev.locationapp.ui.bookmark;
 import android.content.Context;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +21,8 @@ import com.mobdev.locationapp.Logger;
 import com.mobdev.locationapp.Model.Location;
 import com.mobdev.locationapp.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -77,8 +76,12 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
                 .load(bookmarkList.get(position).getImgURL())
                 .placeholder(R.drawable.ic_globe)
                 .into(holder.image);
-        holder.coordinates.setText(bookmarkList.get(position).getX()+","+ bookmarkList.get(position).getY());
+        DecimalFormat df = new DecimalFormat("#.##");
+        holder.coorX= bookmarkList.get(position).getX();
+        holder.coorY =bookmarkList.get(position).getY();
+        holder.coordinates.setText(df.format(holder.coorX)+","+ df.format(holder.coorY));
         holder.name.setText(bookmarkList.get(position).getName());
+
 
 
     }
@@ -88,15 +91,13 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
         return bookmarkList.size();
     }
 
-    public void filterList(ArrayList<Location> filteredList) {
-        bookmarkList =filteredList;
-        notifyDataSetChanged();
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         CircleImageView image;
         TextView name;
         TextView coordinates;
+        double coorX;
+        double coorY;
         ImageButton delete_btn;
         ConstraintLayout parentLayout;
         public ViewHolder(@NonNull View itemView) {
@@ -118,11 +119,9 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
             else {
                 Toast.makeText(v.getContext(),"click on other parts",Toast.LENGTH_SHORT).show();
                 Bundle bundle = new Bundle();
-                float x= Float.parseFloat(coordinates.getText().toString().split(",")[0]);
-                float y= Float.parseFloat(coordinates.getText().toString().split(",")[1]);
 
-                bundle.putFloat("bookmark_x",x);
-                bundle.putFloat("bookmark_y",y);
+                bundle.putFloat("bookmark_x", (float) coorX);
+                bundle.putFloat("bookmark_y", (float) coorY);
                 Navigation.findNavController(v).navigate(R.id.action_navigation_show_bookmark_in_map, bundle);
             }
         }
