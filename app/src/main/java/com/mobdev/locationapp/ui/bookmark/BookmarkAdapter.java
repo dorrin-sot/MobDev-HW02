@@ -3,6 +3,8 @@ package com.mobdev.locationapp.ui.bookmark;
 import android.content.Context;
 
 import android.os.Bundle;
+import android.util.SparseArray;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +28,8 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.mobdev.locationapp.Logger.e;
+
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHolder>  {
 
 
@@ -35,8 +39,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
     public static BookmarkAdapter adapter;
 
 
-    public BookmarkAdapter(Context mContext) {
-        this.mContext = mContext;
+    public BookmarkAdapter() {
         adapter=this;
     }
 
@@ -64,6 +67,7 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bookmark_item,parent,false);
+        mContext = parent.getContext();
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }
