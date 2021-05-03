@@ -3,6 +3,7 @@ package com.mobdev.locationapp.ui.map;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.Toast;
@@ -22,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textview.MaterialTextView;
@@ -89,10 +92,21 @@ public class MapFragment extends Fragment implements
 
         mapView = view.findViewById(R.id.mapView);
         speedTextView = ((CardView) mapView.findViewById(speed_card_view)).findViewById(speed_text_view);
+
+        hideSoftKeyboardIfOpen();
+
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
         // return inflater.inflate(R.layout.fragment_map, container, false);
         return view;
+    }
+
+    private void hideSoftKeyboardIfOpen() {
+        Activity activity = getActivity();
+        if (activity.getCurrentFocus() == null)
+            return;
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 
     private void initSearchFab() {
