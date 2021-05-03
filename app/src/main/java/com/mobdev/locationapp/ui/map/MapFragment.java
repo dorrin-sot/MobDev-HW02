@@ -1,11 +1,12 @@
 package com.mobdev.locationapp.ui.map;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,13 +15,16 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textview.MaterialTextView;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
@@ -34,31 +38,39 @@ import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
-import com.mapbox.mapboxsdk.location.modes.CameraMode;
+import com.mapbox.mapboxsdk.location.LocationComponentOptions;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.plugins.markerview.MarkerView;
+import com.mapbox.mapboxsdk.plugins.markerview.MarkerViewManager;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
-import com.mobdev.locationapp.MainActivity;
-import com.mobdev.locationapp.Model.Location;
 import com.mobdev.locationapp.R;
 import com.mobdev.locationapp.ui.bookmark.BookmarkAdapter;
 
 import java.util.List;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static com.mapbox.mapboxsdk.location.LocationComponentOptions.builder;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
+import static com.mobdev.locationapp.R.id.speed_card_view;
+import static com.mobdev.locationapp.R.id.speed_text_view;
+import static com.mobdev.locationapp.R.layout.speed_marker;
 
 public class MapFragment extends Fragment implements
         OnMapReadyCallback, PermissionsListener {
     public static MapView mapView;
     private PermissionsManager permissionsManager;
     private MapboxMap mapboxMap;
+    private MarkerView markerView;
+    private MarkerViewManager markerViewManager;
+    private MaterialTextView speedTextView;
     private LatLng currentLocation;
     private String geojsonSourceLayerId = "geojsonSourceLayerId";
     private String symbolIconId = "symbolIconId";
@@ -76,6 +88,7 @@ public class MapFragment extends Fragment implements
         // setContentView(R.layout.activity_location_component);
 
         mapView = view.findViewById(R.id.mapView);
+        speedTextView = ((CardView) mapView.findViewById(speed_card_view)).findViewById(speed_text_view);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
         // return inflater.inflate(R.layout.fragment_map, container, false);
@@ -174,12 +187,30 @@ public class MapFragment extends Fragment implements
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
 
 // Activate with options
+//            LocationComponentOptions locationComponentOptions = builder(getContext())
+//                    .foregroundName("nothing")
+//                    .backgroundName("nothing")
+//                    .foregroundStaleName("nothing")
+//                    .backgroundStaleName("nothing")
+//                    .build();
             locationComponent.activateLocationComponent(
-                    LocationComponentActivationOptions.builder(getContext(), loadedMapStyle).build());
+                    LocationComponentActivationOptions.builder(getContext(), loadedMapStyle)
+//                            .locationComponentOptions(locationComponentOptions)
+                            .build()
+            );
 
 // Enable to make component visible
             locationComponent.setLocationComponentEnabled(true);
+
             currentLocation = new LatLng(locationComponent.getLastKnownLocation().getLatitude(), locationComponent.getLastKnownLocation().getLongitude());
+
+//            showCurrentLocationAndSpeed();
+            speedTextView.setText(String.valueOf(((int) locationComponent.getLastKnownLocation().getSpeed())));
+
+            locationComponent.addOnIndicatorPositionChangedListener(point -> {
+
+            });
+
 // Set the component's camera mode
             // locationComponent.zoomWhileTracking(17);
             // locationComponent.setCameraMode(CameraMode.TRACKING);
@@ -222,6 +253,42 @@ public class MapFragment extends Fragment implements
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(getActivity());
         }
+    }
+
+    private void showCurrentLocationAndSpeed() {
+        LocationComponent locationComponent = mapboxMap.getLocationComponent();
+
+        // Initialize the MarkerViewManager
+        markerViewManager = new MarkerViewManager(mapView, mapboxMap);
+
+        // Use an XML layout to create a View object
+        View customView = LayoutInflater.from(getContext()).inflate(
+                speed_marker, null);
+        customView.setLayoutParams(new LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+
+        MaterialTextView speedTextView = customView.findViewById(R.id.speed);
+
+        // Use the View to create a MarkerView which will eventually be given to
+        // the plugin's MarkerViewManager class
+        double offsetLat = 0.00019, offsetLong = -0.00013;
+        markerView = new MarkerView(new LatLng(
+                locationComponent.getLastKnownLocation().getLatitude() + offsetLat,
+                locationComponent.getLastKnownLocation().getLongitude() + offsetLong
+        ), customView);
+        markerViewManager.addMarker(markerView);
+
+        // update location and speed
+        locationComponent.addOnIndicatorPositionChangedListener(point -> {
+                    float speed = locationComponent
+                            .getLastKnownLocation()
+                            .getSpeed();
+                    speedTextView.setText(speed + " m/s");
+                    markerView.setLatLng(new LatLng(
+                            point.latitude() + offsetLat,
+                            point.longitude() + offsetLong
+                    ));
+                }
+        );
     }
 
     @Override

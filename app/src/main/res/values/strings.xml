@@ -20,6 +20,7 @@
     <string name="themeDark_title">themeDark</string>
     <string name="DarkLocationTheme">DarkLocationTheme</string>
     <string name="LightLocationTheme">LightLocationTheme</string>
+    <string name="m_s">m/s</string>
     <bool name="themeDark">false</bool>
 
     <integer name="theme_enum_default">0</integer>
