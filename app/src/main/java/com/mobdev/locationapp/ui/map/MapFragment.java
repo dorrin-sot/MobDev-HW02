@@ -3,11 +3,13 @@ package com.mobdev.locationapp.ui.map;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -21,13 +23,16 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
+import androidx.navigation.Navigation;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textview.MaterialTextView;
+import com.mapbox.android.core.location.LocationEngine;
+import com.mapbox.android.core.location.LocationEngineCallback;
+import com.mapbox.android.core.location.LocationEngineRequest;
+import com.mapbox.android.core.location.LocationEngineResult;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
@@ -41,7 +46,6 @@ import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
-import com.mapbox.mapboxsdk.location.LocationComponentOptions;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -56,25 +60,33 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mobdev.locationapp.R;
 import com.mobdev.locationapp.ui.bookmark.BookmarkAdapter;
 
+import java.util.Arrays;
 import java.util.List;
 
+import static android.content.Context.LOCATION_SERVICE;
+import static android.location.LocationManager.GPS_PROVIDER;
+import static android.os.Looper.getMainLooper;
+import static android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.mapbox.mapboxsdk.location.LocationComponentOptions.builder;
+import static com.mapbox.android.core.location.LocationEngineProvider.getBestLocationEngine;
+import static com.mapbox.android.core.location.LocationEngineRequest.PRIORITY_HIGH_ACCURACY;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
+import static com.mobdev.locationapp.Logger.d;
+import static com.mobdev.locationapp.Logger.e;
+import static com.mobdev.locationapp.R.drawable.ic_baseline_gps_off_24;
+import static com.mobdev.locationapp.R.id.action_navigation_no_gps;
 import static com.mobdev.locationapp.R.id.speed_card_view;
 import static com.mobdev.locationapp.R.id.speed_text_view;
 import static com.mobdev.locationapp.R.layout.speed_marker;
 
-public class MapFragment extends Fragment implements
-        OnMapReadyCallback, PermissionsListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, PermissionsListener {
     public static MapView mapView;
     private PermissionsManager permissionsManager;
     private MapboxMap mapboxMap;
-    private MarkerView markerView;
-    private MarkerViewManager markerViewManager;
     private MaterialTextView speedTextView;
-    private LatLng currentLocation;
+    private LocationEngine locationEngine;
+    private LocationChangeListeningLocationCallback callback = new LocationChangeListeningLocationCallback();
     private String geojsonSourceLayerId = "geojsonSourceLayerId";
     private String symbolIconId = "symbolIconId";
     private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
@@ -165,7 +177,7 @@ public class MapFragment extends Fragment implements
                 mapboxMap.addMarker(new MarkerOptions()
                         .position(new LatLng(point.getLatitude(), point.getLongitude()))
                 );
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                Builder builder = new Builder(getActivity());
 
                 EditText editText = new EditText(getActivity());
                 builder.setView(editText)
@@ -209,43 +221,13 @@ public class MapFragment extends Fragment implements
 //                    .build();
             locationComponent.activateLocationComponent(
                     LocationComponentActivationOptions.builder(getContext(), loadedMapStyle)
+                            .useDefaultLocationEngine(false)
 //                            .locationComponentOptions(locationComponentOptions)
                             .build()
             );
 
 // Enable to make component visible
             locationComponent.setLocationComponentEnabled(true);
-
-            currentLocation = new LatLng(locationComponent.getLastKnownLocation().getLatitude(), locationComponent.getLastKnownLocation().getLongitude());
-
-//            showCurrentLocationAndSpeed();
-            speedTextView.setText(String.valueOf(((int) locationComponent.getLastKnownLocation().getSpeed())));
-
-            locationComponent.addOnIndicatorPositionChangedListener(point -> {
-
-            });
-
-// Set the component's camera mode
-            // locationComponent.zoomWhileTracking(17);
-            // locationComponent.setCameraMode(CameraMode.TRACKING);
-            if (getArguments() == null) {
-                CameraPosition position = new CameraPosition.Builder()
-                        .target(new LatLng(locationComponent.getLastKnownLocation().getLatitude(), locationComponent.getLastKnownLocation().getLongitude())) // Sets the new camera position
-                        .zoom(17) // Sets the zoom
-                        .build(); // Creates a CameraPosition from the builder
-                mapboxMap.animateCamera(CameraUpdateFactory
-                        .newCameraPosition(position), 3000);
-            } else {
-                mapboxMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(getArguments().getFloat("bookmark_x"), getArguments().getFloat("bookmark_y"))));
-                CameraPosition position = new CameraPosition.Builder()
-                        .target(new LatLng(getArguments().getFloat("bookmark_x"), getArguments().getFloat("bookmark_y"))) // Sets the new camera position
-                        .zoom(17) // Sets the zoom
-                        .build(); // Creates a CameraPosition from the builder
-
-                mapboxMap.animateCamera(CameraUpdateFactory
-                        .newCameraPosition(position), 3000);
-            }
 
             FloatingActionButton goToMyLocation = getActivity().findViewById(R.id.goToMyLocationFab);
             goToMyLocation.setOnClickListener(new View.OnClickListener() {
@@ -263,13 +245,71 @@ public class MapFragment extends Fragment implements
 
 // Set the component's render mode
             locationComponent.setRenderMode(RenderMode.COMPASS);
+
+            iniLocationEngine();
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(getActivity());
         }
     }
 
+    private void initLocationAndCameraPosition(LocationComponent locationComponent, Location location) {
+        // Set the component's camera mode
+        // locationComponent.zoomWhileTracking(17);
+        // locationComponent.setCameraMode(CameraMode.TRACKING);
+        if (getArguments() == null) {
+            CameraPosition position = new CameraPosition.Builder()
+                    .target(new LatLng(location.getLatitude(), location.getLongitude())) // Sets the new camera position
+                    .zoom(17) // Sets the zoom
+                    .build(); // Creates a CameraPosition from the builder
+            mapboxMap.animateCamera(CameraUpdateFactory
+                    .newCameraPosition(position), 3000);
+        } else {
+            mapboxMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(getArguments().getFloat("bookmark_x"), getArguments().getFloat("bookmark_y"))));
+            CameraPosition position = new CameraPosition.Builder()
+                    .target(new LatLng(getArguments().getFloat("bookmark_x"), getArguments().getFloat("bookmark_y"))) // Sets the new camera position
+                    .zoom(17) // Sets the zoom
+                    .build(); // Creates a CameraPosition from the builder
+
+            mapboxMap.animateCamera(CameraUpdateFactory
+                    .newCameraPosition(position), 3000);
+        }
+    }
+
+    private boolean isGpsTurnedOff() {
+        LocationManager locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
+        assert locationManager != null;
+        return !locationManager.isProviderEnabled(GPS_PROVIDER);
+    }
+
+    private void showNeedGpsDialog() {
+        AlertDialog alertDialog = new Builder(getContext())
+                .setTitle("GPS required")
+                .setMessage("Your GPS seems to be turned off. GPS connection is required to view map.")
+                .setPositiveButton("Try Again", (dialog, which) -> {
+                    if (isGpsTurnedOff())
+                        Navigation.findNavController(getView()).navigate(action_navigation_no_gps);
+                    else
+                        onStart();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Dismiss", (dialog, which) -> {
+                    if (isGpsTurnedOff())
+                        Navigation.findNavController(getView()).navigate(action_navigation_no_gps);
+                    else
+                        onStart();
+                    dialog.dismiss();
+                })
+                .setIcon(ic_baseline_gps_off_24)
+                .create();
+        alertDialog.setCanceledOnTouchOutside(true);
+        alertDialog.show();
+    }
+
     private void showCurrentLocationAndSpeed() {
+        MarkerView markerView;
+        MarkerViewManager markerViewManager;
         LocationComponent locationComponent = mapboxMap.getLocationComponent();
 
         // Initialize the MarkerViewManager
@@ -361,8 +401,17 @@ public class MapFragment extends Fragment implements
             });
         } else {
             Toast.makeText(getContext(), R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
-            // finish();
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if (locationEngine != null)
+            locationEngine.removeLocationUpdates(callback);
+
+        mapView.onStop();
     }
 
     @Override
@@ -371,4 +420,46 @@ public class MapFragment extends Fragment implements
         mapView.onDestroy();
     }
 
+    @SuppressLint("MissingPermission")
+    private void iniLocationEngine () {
+        locationEngine = getBestLocationEngine(getContext());
+
+        long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L,
+                DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 5;
+
+        LocationEngineRequest request = new LocationEngineRequest.Builder(DEFAULT_INTERVAL_IN_MILLISECONDS)
+                .setPriority(PRIORITY_HIGH_ACCURACY)
+                .setMaxWaitTime(DEFAULT_MAX_WAIT_TIME)
+                .build();
+
+        locationEngine.requestLocationUpdates(request, callback, getMainLooper());
+        locationEngine.getLastLocation(callback);
+    }
+
+    private class LocationChangeListeningLocationCallback implements LocationEngineCallback<LocationEngineResult> {
+
+        @SuppressLint("MissingPermission")
+        @Override
+        public void onSuccess(LocationEngineResult result) {
+            Location location = result.getLastLocation();
+
+            if (location == null) return;
+
+            initLocationAndCameraPosition(mapboxMap.getLocationComponent(), location);
+
+            speedTextView.setText(String.format("%.1f", location.getSpeed()));
+            e("speed = " + speedTextView.getText());
+
+            // Pass the new location to the Maps SDK's LocationComponent
+            if (mapboxMap != null)
+                mapboxMap.getLocationComponent().forceLocationUpdate(location);
+        }
+
+        @Override
+        public void onFailure(@NonNull Exception exception) {
+            e(Arrays.toString(exception.getStackTrace()));
+            if (isGpsTurnedOff())
+                showNeedGpsDialog();
+        }
+    }
 }

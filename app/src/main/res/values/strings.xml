@@ -1,6 +1,6 @@
 <resources>
 
-<string name="app_name">Location App</string>
+    <string name="app_name">Location App</string>
     <string name="title_bookmarks">Bookmarks</string>
     <string name="title_map">Map</string>
     <string name="title_settings">Settings</string>
@@ -26,4 +26,7 @@
     <integer name="theme_enum_default">0</integer>
     <integer name="theme_enum_light">1</integer>
     <integer name="theme_enum_dark">2</integer>
+    <string name="can_t_connect_to_the_gps">Can\'t connect to the GPS</string>
+    <string name="try_again">try again</string>
+    <string name="turn_on">turn on</string>
 </resources>

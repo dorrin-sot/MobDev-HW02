@@ -26,10 +26,23 @@
     </fragment>
 
     <fragment
+        android:id="@+id/navigation_no_gps"
+        android:name="com.mobdev.locationapp.ui.map.NoGpsFragment"
+        tools:layout="@layout/fragment_no_gps">
+        <action
+            android:id="@+id/action_navigation_load_map_again"
+            app:destination="@id/navigation_map" />
+    </fragment>
+
+    <fragment
         android:id="@+id/navigation_map"
         android:name="com.mobdev.locationapp.ui.map.MapFragment"
         android:label="@string/title_map"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map">
+        <action
+            android:id="@+id/action_navigation_no_gps"
+            app:destination="@id/navigation_no_gps" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_settings"
