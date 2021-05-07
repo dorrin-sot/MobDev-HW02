@@ -65,6 +65,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static android.content.Context.LOCATION_SERVICE;
+import static android.content.Context.MODE_PRIVATE;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.os.Looper.getMainLooper;
 import static android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
@@ -154,8 +155,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         MapFragment.this.mapboxMap = mapboxMap;
-
-        mapboxMap.setStyle(Style.MAPBOX_STREETS,
+        int themeID = getActivity().getSharedPreferences("theme_prefs", MODE_PRIVATE).getInt(getString(R.string.theme_title), 0);
+        boolean darkTheme = themeID == getResources().getInteger(R.integer.theme_enum_dark);
+        String style;
+        if (darkTheme)
+            style=Style.DARK;
+        else style=Style.MAPBOX_STREETS;
+        System.out.println(darkTheme+"*780#"+style);
+        mapboxMap.setStyle(style,
                 new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
