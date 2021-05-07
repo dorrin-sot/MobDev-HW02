@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -90,7 +91,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     private String geojsonSourceLayerId = "geojsonSourceLayerId";
     private String symbolIconId = "symbolIconId";
     private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
-
+    public static boolean isSearch=true;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         Mapbox.getInstance(getContext(), getString(R.string.mapbox_access_token));
@@ -122,7 +123,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     }
 
     private void initSearchFab() {
-        getActivity().findViewById(R.id.fab_location_search).setOnClickListener(new View.OnClickListener() {
+        EditText searchText =getActivity().findViewById(R.id.map_search_text);
+        searchText.setInputType(InputType.TYPE_NULL);
+        searchText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new PlaceAutocomplete.IntentBuilder()
@@ -257,14 +260,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
         // Set the component's camera mode
         // locationComponent.zoomWhileTracking(17);
         // locationComponent.setCameraMode(CameraMode.TRACKING);
-        if (getArguments() == null) {
+        if (!isSearch&&getArguments() == null) {
             CameraPosition position = new CameraPosition.Builder()
                     .target(new LatLng(location.getLatitude(), location.getLongitude())) // Sets the new camera position
                     .zoom(17) // Sets the zoom
                     .build(); // Creates a CameraPosition from the builder
             mapboxMap.animateCamera(CameraUpdateFactory
                     .newCameraPosition(position), 3000);
-        } else {
+        } else if(!isSearch&&getArguments() != null) {
             mapboxMap.addMarker(new MarkerOptions()
                     .position(new LatLng(getArguments().getFloat("bookmark_x"), getArguments().getFloat("bookmark_y"))));
             CameraPosition position = new CameraPosition.Builder()
@@ -275,6 +278,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
             mapboxMap.animateCamera(CameraUpdateFactory
                     .newCameraPosition(position), 3000);
         }
+        isSearch=false;
     }
 
     private boolean isGpsTurnedOff() {
@@ -349,7 +353,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Permiss
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_AUTOCOMPLETE) {
-
+            isSearch=true;
 // Retrieve selected location's CarmenFeature
             CarmenFeature selectedCarmenFeature = PlaceAutocomplete.getPlace(data);
 

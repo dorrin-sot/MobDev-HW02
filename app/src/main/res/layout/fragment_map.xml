@@ -11,16 +11,40 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_location_search"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/linearLayoutSearch"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end|top"
-            android:layout_margin="16dp"
-            android:contentDescription="@string/SearchButton"
-            android:elevation="5dp"
-            android:tint="@android:color/white"
-            app:srcCompat="@android:drawable/ic_search_category_default" />
+            android:background="#FFFFFF"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/map_search_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight=".9"
+                android:hint="Search a place..."
+
+
+                android:textSize="20dp" />
+
+        </LinearLayout>
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--            android:id="@+id/fab_location_search"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="end|top"-->
+<!--            android:layout_margin="16dp"-->
+<!--            android:contentDescription="@string/SearchButton"-->
+<!--            android:elevation="5dp"-->
+<!--            android:tint="@android:color/white"-->
+<!--            app:srcCompat="@android:drawable/ic_search_category_default" />-->
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/goToMyLocationFab"
